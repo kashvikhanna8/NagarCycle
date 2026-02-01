@@ -1,0 +1,52 @@
+[
+    {
+        "id": 1,
+        "name": "City East Landfill",
+        "lat": 28.6139,
+        "lng": 77.2090,
+        "address": "Ring Road, East Zone, New Delhi",
+        "type": "Mixed Waste",
+        "status": "High Load",
+        "image": "https://images.unsplash.com/photo-1532996122724-e3c354a0b15b?auto=format&fit=crop&w=500&q=80"
+    },
+    {
+        "id": 2,
+        "name": "GreenCycle Sorting Hub",
+        "lat": 28.5355,
+        "lng": 77.3910,
+        "address": "Sector 62, Noida",
+        "type": "Recyclables",
+        "status": "Available",
+        "image": "https://images.unsplash.com/photo-1595278069441-2cf29f8005a4?auto=format&fit=crop&w=500&q=80"
+    },
+    {
+        "id": 3,
+        "name": "South Zone Incinerator",
+        "lat": 28.4595,
+        "lng": 77.0266,
+        "address": "Industrial Area, Gurgaon",
+        "type": "Hazardous",
+        "status": "Moderate",
+        "image": "https://images.unsplash.com/photo-1563805042-7684c019e1cb?auto=format&fit=crop&w=500&q=80"
+    },
+    {
+        "id": 4,
+        "name": "Eco-Waste Management",
+        "lat": 28.7041,
+        "lng": 77.1025,
+        "address": "Rohini Sector 11, Delhi",
+        "type": "E-Waste",
+        "status": "Available",
+        "image": "https://plus.unsplash.com/premium_photo-1679917152960-b9e64d232024?auto=format&fit=crop&w=500&q=80"
+    },
+    {
+        "id": 5,
+        "name": "West Delhi Compost Plant",
+        "lat": 28.6358,
+        "lng": 77.0766,
+        "address": "Janakpuri, Delhi",
+        "type": "Organic",
+        "status": "Available",
+        "image": "https://images.unsplash.com/photo-1581093583449-ed25213444e9?auto=format&fit=crop&w=500&q=80"
+    }
+]

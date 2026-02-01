@@ -1,0 +1,361 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Dashboard - WREP</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="style.css">
+    <style>
+        .dashboard-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+            gap: 1.5rem;
+            margin-bottom: 2rem;
+        }
+
+        .stat-card {
+            background: var(--card-bg);
+            padding: 1.5rem;
+            border-radius: var(--radius-md);
+            box-shadow: var(--shadow-sm);
+        }
+
+        .stat-value {
+            font-size: 2rem;
+            font-weight: 700;
+            color: var(--primary-color);
+            margin: 0.5rem 0;
+        }
+
+        .stat-label {
+            color: var(--text-light);
+            font-size: 0.9rem;
+        }
+
+        .tabs {
+            border-bottom: 1px solid var(--border-color);
+            margin-bottom: 2rem;
+        }
+
+        .tab-btn {
+            background: none;
+            border: none;
+            padding: 1rem 1.5rem;
+            font-size: 1rem;
+            font-weight: 500;
+            cursor: pointer;
+            color: var(--text-light);
+            position: relative;
+        }
+
+        .tab-btn.active {
+            color: var(--primary-color);
+        }
+
+        .tab-btn.active::after {
+            content: '';
+            position: absolute;
+            bottom: -1px;
+            left: 0;
+            width: 100%;
+            height: 2px;
+            background: var(--primary-color);
+        }
+
+        .table-container {
+            background: var(--card-bg);
+            border-radius: var(--radius-md);
+            box-shadow: var(--shadow-sm);
+            overflow: hidden;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+
+        th,
+        td {
+            text-align: left;
+            padding: 1rem;
+            border-bottom: 1px solid var(--border-color);
+            color: var(--text-color);
+        }
+
+        th {
+            background: rgba(255, 255, 255, 0.05);
+            /* Slight highlight for header */
+            font-weight: 600;
+            color: var(--primary-color);
+        }
+
+        tr:last-child td {
+            border-bottom: none;
+        }
+    </style>
+</head>
+
+<body>
+
+    <!-- Header -->
+    <header>
+        <div class="container">
+            <nav>
+                <a href="index.html" class="logo" style="display: flex; align-items: center; text-decoration: none;">
+                    <img src="logo_final.jpg" alt="Logo" style="height: 55px; width: auto; margin-right: 10px;">
+                    <span style="font-size: 1.5rem; font-weight: bold; color: var(--text-color);">नगर<span
+                            style="font-family: sans-serif;">CYCLE</span></span>
+                </a>
+                <ul class="nav-links">
+                    <li><a href="index.html">Home</a></li>
+                    <li><a href="listing.html">List Waste</a></li>
+                    <li><a href="discarded.html">Discarded Waste</a></li>
+                    <li class="dropdown">
+                        <a href="marketplace.html">Marketplace ▾</a>
+                        <div class="dropdown-content">
+                            <a href="marketplace.html">Organic</a>
+                            <a href="marketplace.html">Recyclable</a>
+                            <a href="marketplace.html">Construction</a>
+                            <a href="marketplace.html">E-Waste</a>
+                        </div>
+                    </li>
+
+                    <!-- Auth Item (Dynamic) -->
+                    <li id="auth-item">
+                        <a href="login.html" class="btn btn-primary"
+                            style="padding: 4px 12px; font-size: 0.9rem; color: black;">Login</a>
+                    </li>
+                </ul>
+            </nav>
+        </div>
+    </header>
+
+    <div class="container" style="padding-top: 2rem; padding-bottom: 2rem;">
+
+        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 2rem;">
+            <h1>My Dashboard</h1>
+            <a href="listing.html" class="btn btn-primary">+ New Listing</a>
+        </div>
+
+        <!-- Advanced Metrics & Rewards -->
+        <section class="dashboard-grid">
+            <!-- Quality Score -->
+            <div class="stat-card" style="border-top: 4px solid var(--primary-color);">
+                <div style="display: flex; justify-content: space-between; margin-bottom: 0.5rem;">
+                    <div class="stat-label">Segregation Quality Score</div>
+                    <span style="font-weight: bold; color: var(--primary-color);">High</span>
+                </div>
+                <div class="stat-value" style="font-size: 2.5rem;">92<span
+                        style="font-size: 1rem; color: var(--text-light);">/100</span></div>
+                <div style="height: 6px; background: #eee; border-radius: 3px; margin-top: 0.5rem;">
+                    <div style="width: 92%; height: 100%; background: var(--primary-color); border-radius: 3px;"></div>
+                </div>
+                <div style="font-size: 0.8rem; color: var(--text-light); margin-top: 0.5rem;">Top 5% in your city!
+                    Faster pickups active.</div>
+            </div>
+
+            <!-- Eco-Credits / Rewards -->
+            <div class="stat-card" style="border-top: 4px solid var(--accent-color);">
+                <div class="stat-label">Eco-Credits Earned</div>
+                <div class="stat-value" style="color: var(--accent-color);">2,450</div>
+                <!-- Redeem removed as per request -->
+            </div>
+
+            <!-- Year Interaction -->
+            <!-- Year Interaction -->
+            <div class="stat-card" style="grid-column: span 2;">
+                <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 1rem;">
+                    <div class="stat-label">Yearly Waste Diversion</div>
+                    <select class="form-control" style="width: auto; padding: 4px;" id="yearSelect">
+                        <option value="2026" selected>2026 (My Data)</option>
+                        <option value="2025">2025 (National)</option>
+                        <option value="2024">2024 (National)</option>
+                    </select>
+                </div>
+                <!-- Chart.js Canvas -->
+                <div style="height: 200px; width: 100%;">
+                    <canvas id="diversionChart"></canvas>
+                </div>
+            </div>
+        </section>
+
+        <!-- Basic Stats (Existing, kept for summary) -->
+        <section class="dashboard-grid" style="margin-top: 2rem;">
+            <div class="stat-card">
+                <span style="font-size: 1.5rem;"></span>
+                <div id="totalRevenue" class="stat-value" style="font-size: 1.5rem;">Rs.0</div>
+                <div class="stat-label">Total Revenue</div>
+            </div>
+            <div class="stat-card">
+                <span style="font-size: 1.5rem;"></span>
+                <div id="totalTransactions" class="stat-value" style="font-size: 1.5rem;">0</div>
+                <div class="stat-label">Transactions</div>
+            </div>
+        </section>
+
+        <!-- Tabs -->
+        <div class="tabs">
+            <button class="tab-btn active">My Listings</button>
+            <button class="tab-btn">Active Requests</button>
+            <button class="tab-btn">Sales History</button>
+        </div>
+
+        <!-- Table -->
+        <div class="table-container">
+            <table>
+                <thead>
+                    <tr>
+                        <th>Item</th>
+                        <th>Category</th>
+                        <th>Date Listed</th>
+                        <th>Status</th>
+                        <th>Action</th>
+                    </tr>
+                </thead>
+                <tbody id="listingsTableBody">
+                    <!-- Dynamic Content -->
+                </tbody>
+            </table>
+        </div>
+
+    </div>
+
+</body>
+
+</html>
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+<script src="script.js"></script>
+<script type="module" src="js/nav-loader.js"></script>
+<script>
+    document.addEventListener('DOMContentLoaded', () => {
+        const orders = JSON.parse(localStorage.getItem('ActiveOrders') || '[]');
+
+        // --- 1. Dashboard Stats Logic ---
+        let revenue = 0;
+        let transactions = 0;
+        let myRecoveredWeight = 0; // in kg
+
+        const tbody = document.getElementById('listingsTableBody');
+        tbody.innerHTML = '';
+
+        orders.forEach(order => {
+            if (order.status === 'Completed' || order.status === 'In Transit') {
+                revenue += (parseInt(order.payout) || 0);
+                transactions++;
+
+                // Extract weight (e.g. "5 kg" or "5")
+                const w = parseFloat((order.weight || "0").toString().split(' ')[0]) || 0;
+                myRecoveredWeight += w;
+            }
+
+            const tr = document.createElement('tr');
+            tr.innerHTML = `
+                <td style="display: flex; align-items: center; gap: 0.5rem;">
+                    <img src="${order.img || 'https://via.placeholder.com/50'}" style="width: 40px; height: 40px; border-radius: 4px; object-fit: cover;">
+                    <span>${order.type}</span>
+                </td>
+                <td>${(order.type || "").includes('Waste') ? 'E-Waste' : 'Recyclable'}</td>
+                <td>${new Date().toLocaleDateString()}</td>
+                <td><span class="tag tag-${getStatusColor(order.status)}">${order.status}</span></td>
+                <td><a href="tracking.html" style="color: var(--primary-color);">Track Order</a></td>
+            `;
+            tbody.appendChild(tr);
+        });
+
+        document.getElementById('totalRevenue').innerText = 'Rs.' + revenue;
+        document.getElementById('totalTransactions').innerText = transactions;
+
+
+        // --- 2. Chart.js Logic (Yearly Diversion) ---
+        const ctx = document.getElementById('diversionChart').getContext('2d');
+        let chartInstance;
+
+        // User Provided Sample Data
+        const nationalData = {
+            2024: { generated: 62, recovered: 40, label: "Million Tonnes" }, // 62M Annual
+            2025: { generated: 58.4, recovered: 45, label: "Million Tonnes (Proj)" } // 1.6L Daily derived
+        };
+
+        const renderChart = (year) => {
+            let gen, rec, labelText;
+
+            if (year === '2026') {
+                // Personal Data (My Dashboard)
+                const recKg = myRecoveredWeight;
+                // Simulation: User generates 25% more than they recover via app
+                const genKg = recKg > 0 ? recKg * 1.25 : 5;
+                gen = genKg;
+                rec = recKg;
+                labelText = "Waste (kg)";
+            } else {
+                // National Data
+                gen = nationalData[year].generated;
+                rec = nationalData[year].recovered;
+                labelText = nationalData[year].label;
+            }
+
+            if (chartInstance) chartInstance.destroy();
+
+            chartInstance = new Chart(ctx, {
+                type: 'bar',
+                data: {
+                    labels: ['Generated', 'Recovered'],
+                    datasets: [{
+                        label: labelText,
+                        data: [gen, rec],
+                        backgroundColor: [
+                            'rgba(200, 200, 200, 0.5)', // Grey
+                            'rgba(74, 222, 128, 0.8)'   // Primary Green
+                        ],
+                        borderColor: [
+                            'rgba(200, 200, 200, 1)',
+                            'rgba(74, 222, 128, 1)'
+                        ],
+                        borderWidth: 1
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    scales: {
+                        y: {
+                            beginAtZero: true,
+                            grid: { color: 'rgba(255, 255, 255, 0.1)' },
+                            ticks: { color: '#aaa' }
+                        },
+                        x: {
+                            grid: { display: false },
+                            ticks: { color: '#aaa' }
+                        }
+                    },
+                    plugins: {
+                        legend: { display: false },
+                        tooltip: {
+                            callbacks: {
+                                label: function (context) {
+                                    return context.parsed.y + ' ' + labelText;
+                                }
+                            }
+                        }
+                    }
+                }
+            });
+        };
+
+        // Initial Render
+        renderChart('2026');
+
+        // Listener
+        document.getElementById('yearSelect').addEventListener('change', (e) => {
+            renderChart(e.target.value);
+        });
+    });
+
+    function getStatusColor(status) {
+        if (status === 'Completed' || status === 'Sold') return 'success';
+        if (status === 'In Transit' || status === 'Assigned') return 'info';
+        return 'warning';
+    }
+</script>

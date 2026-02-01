@@ -1,0 +1,243 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Order Invoice - नगरCYCLE</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="style.css">
+    <style>
+        .invoice-container {
+            max-width: 800px;
+            margin: 3rem auto;
+            background: #fff;
+            /* White background for print clarity */
+            color: #000;
+            padding: 3rem;
+            border-radius: 8px;
+            box-shadow: 0 0 20px rgba(0, 0, 0, 0.5);
+        }
+
+        .invoice-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            border-bottom: 2px solid #eee;
+            padding-bottom: 1.5rem;
+            margin-bottom: 2rem;
+        }
+
+        .invoice-logo {
+            font-size: 1.5rem;
+            font-weight: bold;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .status-badge {
+            background: #dcfce7;
+            color: #166534;
+            padding: 4px 12px;
+            border-radius: 99px;
+            font-size: 0.9rem;
+            font-weight: 600;
+            text-transform: uppercase;
+        }
+
+        .invoice-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 2rem;
+            margin-bottom: 2rem;
+        }
+
+        .invoice-label {
+            color: #666;
+            font-size: 0.85rem;
+            margin-bottom: 0.25rem;
+        }
+
+        .invoice-value {
+            font-weight: 600;
+            font-size: 1rem;
+        }
+
+        .line-items {
+            width: 100%;
+            border-collapse: collapse;
+            margin-bottom: 2rem;
+        }
+
+        .line-items th {
+            text-align: left;
+            padding: 1rem;
+            border-bottom: 2px solid #eee;
+            color: #666;
+        }
+
+        .line-items td {
+            padding: 1rem;
+            border-bottom: 1px solid #eee;
+        }
+
+        .total-section {
+            text-align: right;
+        }
+
+        .total-row {
+            display: flex;
+            justify-content: flex-end;
+            gap: 2rem;
+            padding: 0.5rem 0;
+            font-size: 1.1rem;
+        }
+
+        .grand-total {
+            font-size: 1.5rem;
+            font-weight: 700;
+            color: var(--primary-dark);
+            border-top: 2px solid #eee;
+            padding-top: 1rem;
+            margin-top: 0.5rem;
+        }
+
+        /* Print Specifics */
+        @media print {
+            body {
+                background: #fff;
+            }
+
+            .invoice-container {
+                box-shadow: none;
+                margin: 0;
+                width: 100%;
+                max-width: 100%;
+            }
+
+            .no-print {
+                display: none !important;
+            }
+        }
+    </style>
+</head>
+
+<body>
+
+    <div class="container no-print" style="margin-top: 2rem;">
+        <a href="index.html" style="color: var(--text-light); text-decoration: none;">&larr; Return to Home</a>
+    </div>
+
+    <div class="invoice-container" id="invoiceArea">
+        <!-- Header -->
+        <div class="invoice-header">
+            <div class="invoice-logo" style="display: flex; align-items: center;">
+                <img src="logo_final.jpg" alt="Logo" style="height: 55px; margin-right: 10px;">
+                <span style="font-size: 1.5rem; font-weight: bold; color: #000;">नगर<span
+                        style="font-family: sans-serif;">CYCLE</span></span>
+            </div>
+            <div class="status-badge">Paid</div>
+        </div>
+
+        <div class="invoice-grid">
+            <div>
+                <p class="invoice-label">BILLED TO</p>
+                <div class="invoice-value" id="userName">User Name</div>
+                <div style="font-size: 0.9rem; color: #444; margin-top: 4px;">user@example.com</div>
+            </div>
+            <div style="text-align: right;">
+                <p class="invoice-label">INVOICE NUMBER</p>
+                <div class="invoice-value" id="invoiceId">INV-001</div>
+                <br>
+                <p class="invoice-label">DATE</p>
+                <div class="invoice-value" id="invoiceDate">Oct 24, 2024</div>
+            </div>
+        </div>
+
+        <!-- Table -->
+        <table class="line-items">
+            <thead>
+                <tr>
+                    <th width="60%">Item Description</th>
+                    <th width="20%">Qty</th>
+                    <th width="20%" style="text-align: right;">Amount</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr>
+                    <td>
+                        <div id="itemName" style="font-weight: 600;">Item Name</div>
+                        <div id="itemSeller" style="font-size: 0.85rem; color: #666;">Seller: ABC Recyclers</div>
+                    </td>
+                    <td>1</td>
+                    <td style="text-align: right;" id="itemPrice">₹0.00</td>
+                </tr>
+                <tr>
+                    <td>Platform Service Fee</td>
+                    <td>1</td>
+                    <td style="text-align: right;">₹5.00</td>
+                </tr>
+            </tbody>
+        </table>
+
+        <!-- Totals -->
+        <div class="total-section">
+            <div class="total-row">
+                <span>Subtotal:</span>
+                <span id="subTotal">₹0.00</span>
+            </div>
+            <div class="total-row grand-total">
+                <span style="color: #000;">Total Paid:</span>
+                <span id="grandTotal">₹0.00</span>
+            </div>
+        </div>
+
+        <div
+            style="border-top: 1px solid #eee; margin-top: 3rem; padding-top: 1rem; color: #888; font-size: 0.85rem; text-align: center;">
+            <p>Thank you for contributing to the circular economy!</p>
+            <p>Authorized by नगरCYCLE Platform • New Delhi, India</p>
+        </div>
+    </div>
+
+    <div class="container no-print" style="text-align: center; margin-bottom: 4rem;">
+        <button class="btn btn-primary" onclick="window.print()"
+            style="padding: 1rem 2rem; font-size: 1.1rem; color: #000;">
+            📥 Download / Print Invoice
+        </button>
+    </div>
+
+    <script type="module" src="js/nav-loader.js"></script>
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            const itemData = JSON.parse(localStorage.getItem('checkoutItem'));
+
+            if (!itemData) {
+                // Fallback for demo if accessed directly
+                return;
+            }
+
+            // Populate Data
+            document.getElementById('invoiceId').innerText = 'INV-' + Math.floor(Math.random() * 1000000);
+
+            const date = new Date();
+            document.getElementById('invoiceDate').innerText = date.toLocaleDateString("en-US", { year: 'numeric', month: 'short', day: 'numeric' });
+
+            // User Info (Mock or Real)
+            if (window.currentUser) {
+                document.getElementById('userName').innerText = window.currentUser.displayName || "Valued Customer";
+            }
+
+            // Item Details
+            document.getElementById('itemName').innerText = itemData.title;
+            document.getElementById('itemSeller').innerText = 'Seller: ' + (itemData.seller || 'Verified Partner');
+
+            const priceNum = parseInt(itemData.price.replace(/[^0-9]/g, '')) || 0;
+            document.getElementById('itemPrice').innerText = '₹' + priceNum;
+            document.getElementById('subTotal').innerText = '₹' + (priceNum + 5);
+            document.getElementById('grandTotal').innerText = '₹' + (priceNum + 5);
+        });
+    </script>
+</body>
+
+</html>

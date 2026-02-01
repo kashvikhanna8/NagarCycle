@@ -1,0 +1,346 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Discarded Waste - WREP</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="style.css">
+    <style>
+        .landfill-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+            gap: 1.5rem;
+            margin-top: 2rem;
+        }
+
+        .landfill-card {
+            background: var(--card-bg);
+            padding: 1.5rem;
+            border-radius: var(--radius-md);
+            box-shadow: var(--shadow-sm);
+            border: 1px solid var(--border-color);
+            transition: transform 0.2s;
+        }
+
+        .landfill-card:hover {
+            transform: translateY(-3px);
+            box-shadow: var(--shadow-md);
+            border-color: var(--primary-color);
+        }
+
+        .landfill-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-start;
+            margin-bottom: 1rem;
+        }
+
+        .landfill-name {
+            font-size: 1.1rem;
+            font-weight: 600;
+            color: var(--text-color);
+        }
+
+        .landfill-distance {
+            font-size: 0.9rem;
+            color: var(--text-light);
+            background: rgba(255, 255, 255, 0.05);
+            padding: 4px 8px;
+            border-radius: 4px;
+        }
+
+        .waste-types {
+            display: flex;
+            gap: 0.5rem;
+            flex-wrap: wrap;
+            margin-bottom: 1rem;
+        }
+
+        .capacity-bar {
+            height: 6px;
+            background: #333;
+            border-radius: 3px;
+            margin: 0.5rem 0;
+            overflow: hidden;
+        }
+
+        .capacity-fill {
+            height: 100%;
+            background: var(--warning-color);
+        }
+
+        .map-container {
+            width: 100%;
+            height: 400px;
+            background: #2b2b2b;
+            border-radius: var(--radius-md);
+            margin-bottom: 2rem;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            color: var(--text-light);
+            border: 1px solid var(--border-color);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .map-placeholder-img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            opacity: 0.6;
+        }
+    </style>
+</head>
+
+<body>
+
+    <!-- Header -->
+    <header>
+        <div class="container">
+            <nav>
+                <a href="index.html" class="logo" style="display: flex; align-items: center; text-decoration: none;">
+                    <img src="logo_final.jpg" alt="Logo" style="height: 55px; width: auto; margin-right: 10px;">
+                    <span style="font-size: 1.5rem; font-weight: bold; color: var(--text-color);">नगर<span
+                            style="font-family: sans-serif;">CYCLE</span></span>
+                </a>
+                <ul class="nav-links">
+                    <li><a href="index.html">Home</a></li>
+                    <li><a href="listing.html">List Waste</a></li>
+                    <li><a href="marketplace.html">Marketplace</a></li>
+                    <li><a href="rewards.html">Rewards</a></li>
+                    <li><a href="discarded.html" class="active">Discard Waste</a></li>
+
+                    <!-- Auth Item (Dynamic) -->
+                    <li id="auth-item">
+                        <a href="login.html" class="btn btn-primary"
+                            style="padding: 4px 12px; font-size: 0.9rem; color: black;">Login</a>
+                    </li>
+                </ul>
+            </nav>
+        </div>
+    </header>
+
+    <div class="container" style="padding-top: 2rem; padding-bottom: 3rem;">
+        <div class="section-title" style="text-align: left; font-size: 2rem;">Nearby Disposal Facilities</div>
+        <p style="color: var(--text-light); max-width: 800px; margin-bottom: 2rem;">
+            Find authorized landfills and recycling centers near you for non-tradable waste.
+            You can schedule a drop-off or request a specialized pickup.
+        </p>
+
+        <!-- Map Simulation -->
+        <!-- Google Maps Container -->
+        <div id="map" class="map-container"></div>
+        <script src="js/location.js"></script>
+        <script
+            src="https://maps.googleapis.com/maps/api/js?key=AIzaSyCKge2gvtk2tARWibI2hoW3VRU4JGxRuhg&callback=initMap&libraries=places&v=weekly"
+            async defer></script>
+
+        <!-- Facilities Grid -->
+        <h3 style="margin-bottom: 1rem;">Authorized Centers</h3>
+        <div class="landfill-grid">
+
+            <!-- Facility 1 -->
+            <div class="landfill-card">
+                <div class="landfill-header">
+                    <div class="landfill-name">City East Landfill</div>
+                    <span class="landfill-distance">2.4 km</span>
+                </div>
+                <div class="waste-types">
+                    <span class="tag" style="background: rgba(255,255,255,0.1);">Mixed Waste</span>
+                    <span class="tag" style="background: rgba(255,255,255,0.1);">Construction</span>
+                </div>
+                <div style="margin-bottom: 1rem;">
+                    <div style="display: flex; justify-content: space-between; font-size: 0.85rem; margin-bottom: 4px;">
+                        <span style="color: var(--text-light);">Current Capacity</span>
+                        <span style="color: var(--warning-color);">High Load</span>
+                    </div>
+                    <div class="capacity-bar">
+                        <div class="capacity-fill" style="width: 85%;"></div>
+                    </div>
+                </div>
+                <div style="display: flex; gap: 0.5rem; margin-top: 1.5rem;">
+                    <button class="btn btn-primary btn-block" style="font-size: 0.9rem;"
+                        onclick="scheduleDrop('City East Landfill')">Schedule Drop</button>
+                    <button class="btn btn-secondary btn-block" style="font-size: 0.9rem;">Get Directions</button>
+                </div>
+            </div>
+
+            <!-- Facility 2 -->
+            <div class="landfill-card">
+                <div class="landfill-header">
+                    <div class="landfill-name">GreenCycle Sorting Hub</div>
+                    <span class="landfill-distance">5.1 km</span>
+                </div>
+                <div class="waste-types">
+                    <span class="tag" style="background: rgba(255,255,255,0.1);">Recyclables</span>
+                    <span class="tag" style="background: rgba(255,255,255,0.1);">E-Waste</span>
+                </div>
+                <div style="margin-bottom: 1rem;">
+                    <div style="display: flex; justify-content: space-between; font-size: 0.85rem; margin-bottom: 4px;">
+                        <span style="color: var(--text-light);">Current Capacity</span>
+                        <span style="color: var(--primary-color);">Available</span>
+                    </div>
+                    <div class="capacity-bar">
+                        <div class="capacity-fill" style="width: 40%; background: var(--primary-color);"></div>
+                    </div>
+                </div>
+                <div style="display: flex; gap: 0.5rem; margin-top: 1.5rem;">
+                    <button class="btn btn-primary btn-block" style="font-size: 0.9rem;"
+                        onclick="scheduleDrop('GreenCycle Sorting Hub')">Schedule Drop</button>
+                    <button class="btn btn-secondary btn-block" style="font-size: 0.9rem;">Get Directions</button>
+                </div>
+            </div>
+
+            <!-- Dynamic Pending Discards -->
+            <div id="pendingDropsContainer" style="display: contents;"></div>
+
+        </div>
+    </div>
+
+    <!-- Simulated Success Overlay -->
+    <div id="dropSuccessOverlay"
+        style="display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(15, 17, 21, 0.95); z-index: 9999; backdrop-filter: blur(10px); justify-content: center; align-items: center; text-align: center;">
+        <div class="card"
+            style="max-width: 450px; padding: 3rem; border: 1px solid var(--primary-color); box-shadow: var(--glow); animation: popIn 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);">
+            <div style="font-size: 4rem; margin-bottom: 1.5rem;">🚚✨</div>
+            <h2 style="color: var(--primary-color); margin-bottom: 0.5rem;">Drop Scheduled!</h2>
+            <p style="color: var(--text-light); margin-bottom: 1.5rem;">
+                A certified gig-worker has been assigned to pick up your waste.
+            </p>
+
+            <div
+                style="background: rgba(255,255,255,0.05); padding: 1rem; border-radius: 8px; margin-bottom: 2rem; text-align: left;">
+                <div style="display: flex; justify-content: space-between; margin-bottom: 0.5rem;">
+                    <span style="color: var(--text-light);">Destination:</span>
+                    <strong id="successFac" style="color: white;">Facility</strong>
+                </div>
+                <div style="display: flex; justify-content: space-between;">
+                    <span style="color: var(--text-light);">Time:</span>
+                    <strong id="successTime" style="color: var(--primary-color);">ASAP</strong>
+                </div>
+            </div>
+
+            <button class="btn btn-primary btn-block"
+                onclick="document.getElementById('dropSuccessOverlay').style.display='none'">Awesome</button>
+        </div>
+    </div>
+
+    <style>
+        @keyframes popIn {
+            0% {
+                transform: scale(0.8);
+                opacity: 0;
+            }
+
+            100% {
+                transform: scale(1);
+                opacity: 1;
+            }
+        }
+    </style>
+
+    <!-- Footer Styles will apply from CSS -->
+    <footer>
+        <div class="container">
+            <div class="grid-4" style="grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 2rem;">
+                <div>
+                    <!-- Logo text match -->
+                    <a href="index.html" class="logo" style="margin-bottom: 1rem;">
+                        <span>नगरCYCLE</span>
+                    </a>
+                    <p style="color: var(--text-light); font-size: 0.9rem;">
+                        Connecting waste generators with local recyclers for a circular economy.
+                    </p>
+                </div>
+                <div>
+                    <h4 style="margin-bottom: 1rem; color: #fff;">Platform</h4>
+                    <ul style="list-style: none;">
+                        <li style="margin-bottom: 0.5rem;"><a href="listing.html">List Waste</a></li>
+                        <li style="margin-bottom: 0.5rem;"><a href="marketplace.html">Marketplace</a></li>
+                        <li style="margin-bottom: 0.5rem;"><a href="discarded.html">Discarded Waste</a></li>
+                    </ul>
+                </div>
+                <div>
+                    <h4 style="margin-bottom: 1rem; color: #fff;">Resources</h4>
+                    <ul style="list-style: none;">
+                        <li style="margin-bottom: 0.5rem;"><a href="#">Pricing</a></li>
+                        <li style="margin-bottom: 0.5rem;"><a href="#">Sustainability</a></li>
+                        <li style="margin-bottom: 0.5rem;"><a href="#">API</a></li>
+                    </ul>
+                </div>
+                <div>
+                    <h4 style="margin-bottom: 1rem; color: #fff;">Support</h4>
+                    <ul style="list-style: none;">
+                        <li style="margin-bottom: 0.5rem;"><a href="#">Help Center</a></li>
+                        <li style="margin-bottom: 0.5rem;"><a href="#">Contact</a></li>
+
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </footer>
+
+    <script src="script.js"></script>
+    <script type="module" src="js/nav-loader.js"></script>
+    <script>
+        // Render Pending Discards from Listing Page
+        function renderPendingDiscards() {
+            const container = document.getElementById('pendingDropsContainer');
+            const pending = JSON.parse(localStorage.getItem('PendingDiscards') || '[]');
+
+            if (pending.length === 0) return;
+
+            container.innerHTML = pending.map(item => `
+                <div class="landfill-card" style="border-color: var(--primary-color);">
+                    <div class="landfill-header">
+                        <div class="landfill-name">${item.title}</div>
+                        <span class="landfill-distance" style="background: var(--primary-color); color: #000;">Pending Action</span>
+                    </div>
+                    <div class="waste-types">
+                        <span class="tag" style="background: rgba(255,255,255,0.1);">${item.subTitle}</span>
+                        <span class="tag" style="background: rgba(255,255,255,0.1);">Send to Recycler</span>
+                    </div>
+                    <div style="margin-bottom: 1rem;">
+                        <div style="display: flex; justify-content: space-between; font-size: 0.85rem; margin-bottom: 4px;">
+                            <span style="color: var(--text-light);">Drop Status</span>
+                            <span style="color: var(--warning-color);">Ready for Pickup</span>
+                        </div>
+                        <div class="capacity-bar">
+                            <div class="capacity-fill" style="width: 100%; background: var(--primary-color);"></div>
+                        </div>
+                    </div>
+                    <div style="display: flex; gap: 0.5rem; margin-top: 1.5rem;">
+                        <button class="btn btn-primary btn-block" style="font-size: 0.9rem;" 
+                            onclick="scheduleDrop('${item.title.replace(/'/g, "\\'")}')">Schedule Drop</button>
+                        <button class="btn btn-secondary btn-block" style="font-size: 0.9rem;" onclick="removePending('${item.id}')">Remove</button>
+                    </div>
+                </div>
+            `).join('');
+        }
+
+        window.removePending = function (id) {
+            let pending = JSON.parse(localStorage.getItem('PendingDiscards') || '[]');
+            pending = pending.filter(i => i.id !== id);
+            localStorage.setItem('PendingDiscards', JSON.stringify(pending));
+            renderPendingDiscards();
+        };
+
+        window.addEventListener('load', renderPendingDiscards);
+
+        window.scheduleDrop = function (facilityName) {
+            console.log("Schedule Drop (UI Only) for:", facilityName);
+            // UI Mock only - No backend, no inputs
+            document.getElementById('successFac').innerText = facilityName;
+            document.getElementById('successTime').innerText = "ASAP";
+
+            // Show Overlay
+            const overlay = document.getElementById('dropSuccessOverlay');
+            overlay.style.display = 'flex';
+        };
+    </script>
+</body>
+
+</html>

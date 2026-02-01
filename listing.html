@@ -1,0 +1,623 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>List Your Waste - WREP</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="style.css">
+    <link rel="stylesheet" href="css/trashtalk.css">
+</head>
+
+<body>
+
+    <!-- Header -->
+    <header>
+        <div class="container">
+            <nav>
+                <a href="index.html" class="logo" style="display: flex; align-items: center; text-decoration: none;">
+                    <img src="logo_final.jpg" alt="Logo" style="height: 55px; width: auto; margin-right: 10px;">
+                    <span style="font-size: 1.5rem; font-weight: bold; color: var(--text-color);">नगर<span
+                            style="font-family: sans-serif;">CYCLE</span></span>
+                </a>
+                <ul class="nav-links">
+                    <li><a href="index.html">Home</a></li>
+                    <li><a href="listing.html" class="active">List Waste</a></li>
+                    <li><a href="marketplace.html">Marketplace</a></li>
+                    <li><a href="rewards.html">Rewards</a></li>
+                    <li><a href="discarded.html">Discard Waste</a></li>
+
+                    <!-- Auth Item (Dynamic) -->
+                    <li id="auth-item">
+                        <a href="login.html" class="btn btn-primary"
+                            style="padding: 4px 12px; font-size: 0.9rem; color: black;">Login</a>
+                    </li>
+                </ul>
+            </nav>
+        </div>
+    </header>
+
+    <div class="container" style="padding-top: 2rem; padding-bottom: 2rem;">
+
+        <div style="max-width: 800px; margin: 0 auto;">
+
+            <!-- Location Detection Widget -->
+            <div class="card" style="margin-bottom: 1.5rem; border-left: 4px solid var(--primary-color);">
+                <div style="display: flex; justify-content: space-between; align-items: center;">
+                    <div>
+                        <h3 style="margin-bottom: 0.25rem; font-size: 1.1rem;">📍 Location Detection</h3>
+                        <p id="location-status" class="text-light" style="margin-bottom: 0; font-size: 0.9rem;">
+                            Auto-detecting your location...</p>
+                    </div>
+                    <button id="detect-btn" class="btn btn-secondary"
+                        style="padding: 6px 12px; font-size: 0.9rem;">Retry Detection</button>
+                </div>
+                <div id="buyer-alert"
+                    style="margin-top: 1rem; padding: 0.75rem; background: var(--bg-color); border-radius: var(--radius-sm); font-size: 0.9rem; color: var(--text-light); display: none;">
+                    <span style="color: var(--primary-color);">●</span> <strong>3 Active Buyers</strong> found within
+                    2km radius.
+                </div>
+
+                <script>
+                    const statusText = document.getElementById('location-status');
+                    const buyerAlert = document.getElementById('buyer-alert');
+                    const detectBtn = document.getElementById('detect-btn');
+
+                    function detectLocation() {
+                        statusText.textContent = "Requesting access...";
+
+                        if (!navigator.geolocation) {
+                            statusText.textContent = "Geolocation is not supported by your browser.";
+                            return;
+                        }
+
+                        navigator.geolocation.getCurrentPosition(
+                            (position) => {
+                                const lat = position.coords.latitude;
+                                const lng = position.coords.longitude;
+
+                                // Fetch City Name (Reverse Geocoding)
+                                fetch(`https://nominatim.openstreetmap.org/reverse?format=json&lat=${lat}&lon=${lng}`)
+                                    .then(response => response.json())
+                                    .then(data => {
+                                        const addr = data.address;
+                                        // Construct full address: [Road/Suburb], [City/Town/Village], [State] [Postcode]
+                                        const parts = [];
+                                        if (addr.road || addr.suburb) parts.push(addr.road || addr.suburb);
+                                        if (addr.city || addr.town || addr.village) parts.push(addr.city || addr.town || addr.village);
+                                        if (addr.state) parts.push(addr.state);
+                                        if (addr.postcode) parts.push(addr.postcode);
+
+                                        const fullAddress = parts.length > 0 ? parts.join(', ') : "Unknown Location";
+                                        statusText.innerHTML = `Location Acquired: <strong style="color:var(--primary-color)">${fullAddress}</strong>`;
+                                    })
+                                    .catch((err) => {
+                                        console.error(err);
+                                        statusText.innerHTML = `Location Acquired: <strong style="color:var(--primary-color)">${lat.toFixed(4)}, ${lng.toFixed(4)}</strong>`;
+                                    });
+
+                                buyerAlert.style.display = 'block'; // Show fake buyer alert
+                                buyerAlert.innerHTML = `<span style="color: var(--primary-color);">●</span> <strong>${Math.floor(Math.random() * 5) + 2} Active Buyers</strong> found near you.`;
+                            },
+                            (error) => {
+                                statusText.textContent = "Unable to retrieve location. Please allow access.";
+                            }
+                        );
+                    }
+
+                    detectBtn.addEventListener('click', detectLocation);
+
+                    // Auto-run on load
+                    window.addEventListener('load', detectLocation);
+                </script>
+            </div>
+
+            <div class="card">
+                <h1 style="margin-bottom: 0.5rem;">List Your Waste</h1>
+                <p class="text-light" style="margin-bottom: 2rem;">Fill in the details to get an automatic evaluation
+                    and listing.</p>
+
+                <form>
+                    <!-- Waste Type -->
+                    <div id="classificationOutput" class="card"
+                        style="display: none; margin-bottom: 1.5rem; background: rgba(0, 255, 157, 0.05); border: 1px solid var(--primary-color); box-shadow: var(--glow);">
+                        <h3 style="color: var(--primary-color); margin-bottom: 1rem;">📋 AI Classification Result</h3>
+                        <div class="grid-2">
+                            <div>
+                                <p style="margin-bottom: 0.25rem; font-size: 0.8rem; color: var(--text-light);">Primary
+                                    Category</p>
+                                <strong id="primaryDisplay"
+                                    style="font-size: 1.1rem; color: var(--text-color); text-transform: uppercase; letter-spacing: 0.5px;">-</strong>
+                            </div>
+                            <div>
+                                <p style="margin-bottom: 0.25rem; font-size: 0.8rem; color: var(--text-light);">
+                                    Sub-Category</p>
+                                <strong id="subDisplay"
+                                    style="font-size: 1.1rem; color: var(--text-color); text-transform: uppercase; letter-spacing: 0.5px;">-</strong>
+                            </div>
+                        </div>
+                        <div
+                            style="margin-top: 1.5rem; padding-top: 1rem; border-top: 1px solid rgba(255,255,255,0.1); display: flex; gap: 10px; flex-wrap: wrap;">
+                            <span id="sellingTag" class="tag">Selling: -</span>
+                            <span id="actionTag" class="tag">Action: -</span>
+                            <span id="valueTag" class="tag">Value: -</span>
+                        </div>
+                        <p id="impactText"
+                            style="margin-top: 1rem; font-size: 0.85rem; color: var(--primary-color); opacity: 0.8; font-style: italic;">
+                        </p>
+                    </div>
+
+                    <div id="manualTypeSelection" class="form-group">
+                        <label class="form-label">Waste Type (Manual Override)</label>
+                        <div class="grid-2">
+                            <!-- ... radios ... -->
+                            <label class="radio-card">
+                                <input type="radio" name="wasteType" value="organic">
+                                <span class="radio-card-content">Organic</span>
+                            </label>
+                            <label class="radio-card">
+                                <input type="radio" name="wasteType" value="recyclable">
+                                <span class="radio-card-content">Recyclable</span>
+                            </label>
+                            <label class="radio-card">
+                                <input type="radio" name="wasteType" value="ewaste">
+                                <span class="radio-card-content">E-Waste</span>
+                            </label>
+                            <label class="radio-card">
+                                <input type="radio" name="wasteType" value="other">
+                                <span class="radio-card-content">Other</span>
+                            </label>
+                        </div>
+                    </div>
+
+                    <div class="grid-2">
+                        <!-- Quantity -->
+                        <div class="form-group">
+                            <label class="form-label">Quantity</label>
+                            <div style="display: flex; gap: 8px;">
+                                <input type="number" id="quantityInput" class="form-control" placeholder="e.g. 50">
+                                <select id="unitSelect" class="form-control" style="width: 100px;">
+                                    <option>kg</option>
+                                    <option>units</option>
+                                    <option>tons</option>
+                                </select>
+                            </div>
+                        </div>
+
+                        <!-- Condition -->
+                        <div class="form-group">
+                            <label class="form-label">Condition</label>
+                            <select id="conditionSelect" class="form-control">
+                                <option>Segregated (Clean)</option>
+                                <option>Mixed (Needs Sorting)</option>
+                            </select>
+                        </div>
+                    </div>
+
+
+
+                    <!-- Image Upload -->
+                    <div class="form-group">
+                        <label class="form-label">Upload Images</label>
+                        <div
+                            style="border: 2px dashed var(--border-color); padding: 2rem; text-align: center; border-radius: var(--radius-md); background: var(--bg-color); position: relative;">
+                            <input type="file" id="wasteImage" accept="image/*"
+                                style="position: absolute; top: 0; left: 0; width: 100%; height: 100%; opacity: 0; cursor: pointer;">
+                            <span style="font-size: 2rem; display: block; margin-bottom: 0.5rem;">📷</span>
+                            <p style="margin-bottom: 0;" id="uploadText">Click or drag photos here</p>
+                        </div>
+                    </div>
+
+                    <!-- Auto-Tag Preview -->
+                    <div id="pricingResult" class="auto-tag-preview"
+                        style="background: rgba(255, 255, 255, 0.03); border: 1px solid rgba(0, 255, 157, 0.2); padding: 1.5rem; border-radius: var(--radius-md); margin-bottom: 2rem; box-shadow: var(--glow);">
+                        <div id="aiAssessmentArea">
+                            <h4 style="color: var(--primary-color); margin-bottom: 0.5rem; font-size: 1.1rem;">AI
+                                Assessment Preview</h4>
+                            <p style="font-size: 0.9rem; color: var(--text-light);">Upload an image for automated
+                                evaluation.</p>
+                        </div>
+                        <div id="priceBreakdownArea"></div>
+                    </div>
+
+                    <div id="listingActions"
+                        style="text-align: right; display: none; gap: 1rem; justify-content: flex-end; margin-top: 2rem;">
+                        <button type="button" class="btn btn-secondary" onclick="sendToRecycler()">Send to
+                            Recycler</button>
+                        <button type="button" id="listWasteBtn" class="btn btn-primary" style="padding: 12px 32px;"
+                            onclick="listToMarketplace()">List on Marketplace</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <!-- Emergency Popup -->
+    <div id="emergencyPopup" class="emergency-popup">
+        <div class="popup-content">
+            <div class="popup-header">
+                <span style="font-size: 1.5rem;">🚨</span>
+                <strong>Emergency Mode Alert</strong>
+                <button class="close-popup" onclick="closeEmergencyPopup()">×</button>
+            </div>
+            <p>High waste volume detected in your area (Festival/Market). Priority pickup services have been enabled for
+                your location.</p>
+        </div>
+    </div>
+
+    <!-- Script for slider & Pricing Engine -->
+    <script src="js/pricingEngine.js"></script>
+    <script>
+        // Global State
+        let aiDetectedType = null;
+        let aiQualityScore = 5;
+
+        // Input Elements
+        const quantityInput = document.getElementById('quantityInput');
+        const unitSelect = document.getElementById('unitSelect');
+        const conditionSelect = document.getElementById('conditionSelect');
+        const wasteRadios = document.querySelectorAll('input[name="wasteType"]');
+        const pricingResultDiv = document.getElementById('pricingResult');
+
+        // Helper to get selected radio
+        function getSelectedWasteType() {
+            for (const radio of wasteRadios) {
+                if (radio.checked) return radio.value;
+            }
+            return 'other';
+        }
+
+        // Helper to get location (basic extraction)
+        function getLocation() {
+            const statusText = document.getElementById('location-status');
+            return statusText ? statusText.innerText : "Unknown";
+        }
+
+        // Reset AI state when user manually changes type
+        wasteRadios.forEach(radio => {
+            radio.addEventListener('change', () => {
+                if (aiDetectedType === 'trash' && radio.value !== 'other') {
+                    aiDetectedType = null;
+                }
+                updateEstimatedPrice();
+            });
+        });
+
+        // Update Price Function
+        function updateEstimatedPrice() {
+            const typeKey = getSelectedWasteType();
+            const priceArea = document.getElementById('priceBreakdownArea');
+
+            let engineType = typeKey;
+            if (typeKey === 'recyclable') engineType = 'plastic';
+            if (typeKey === 'ewaste') engineType = 'e-waste';
+
+            // Use AI detected type if it exists to align engine
+            if (aiDetectedType) {
+                if (aiDetectedType.includes('organic')) engineType = 'organic';
+                else if (aiDetectedType.includes('recyclable')) engineType = 'plastic';
+                else if (aiDetectedType.includes('e-waste')) engineType = 'e-waste';
+                else if (aiDetectedType.includes('construction')) engineType = 'construction';
+            }
+
+            const qty = parseFloat(quantityInput.value) || 0;
+            const unit = unitSelect.value;
+
+            let weightInKg = qty;
+            if (unit === 'tons') weightInKg = qty * 1000;
+
+            const conditionVal = conditionSelect.value;
+            const segregation = conditionVal.includes('Segregated') ? 'segregated' : 'mixed';
+            const location = getLocation();
+
+            if (weightInKg > 0) {
+                const result = window.PricingEngine.calculateFairPrice(engineType, weightInKg, segregation, aiQualityScore, location);
+
+                if (result.isTrash) {
+                    priceArea.innerHTML = `
+                        <hr style="border:0; border-top: 1px dashed rgba(255,255,255,0.1); margin: 15px 0;">
+                        <h4 style="color: var(--danger-color); margin-bottom: 0.5rem; font-size: 1.1rem;">❌ No Commercial Value</h4>
+                        <p style="font-size: 0.9rem; color: var(--text-light); margin-bottom: 15px;">${result.message}</p>
+                        <a href="discarded.html" class="btn btn-secondary btn-block" style="font-size: 0.85rem;">Locate Nearest Landfill</a>
+                    `;
+                } else {
+                    priceArea.innerHTML = `
+                        <hr style="border:0; border-top: 1px dashed rgba(255,255,255,0.1); margin: 15px 0;">
+                        <h4 style="color: var(--primary-color); margin-bottom: 0.5rem; font-size: 1.1rem;">💰 Fair Market Value</h4>
+                        <div style="font-size: 0.95rem; color: var(--text-color); margin-bottom: 10px;">
+                            <strong>${result.wasteType}</strong> detected @ <span style="color: var(--primary-color)">${result.currency}${result.baseRate}/kg</span>
+                        </div>
+                        <div style="display: flex; gap: 10px; flex-wrap: wrap; font-size: 0.75rem; margin-bottom: 15px;">
+                            <span class="tag tag-info">Quality x${result.factors.condition}</span>
+                            <span class="tag tag-success">Segregation x${result.factors.segregation}</span>
+                        </div>
+                        <div style="border-top: 1px solid rgba(255,255,255,0.1); padding-top: 12px; display: flex; justify-content: space-between; align-items: center;">
+                            <span style="color: var(--text-light); font-size: 0.9rem;">Total Estimated Price:</span>
+                            <strong style="font-size: 1.4rem; color: var(--primary-color); text-shadow: 0 0 10px rgba(143,216,160,0.3);">${result.currency} ${result.totalValue}</strong>
+                        </div>
+                    `;
+                    // Store the final calculated price
+                    localStorage.setItem('last_price', `${result.currency} ${result.totalValue}`);
+                }
+            } else {
+                priceArea.innerHTML = "";
+            }
+        }
+
+        // Helper to handle AI Response
+        window.handleAIResult = function (result) {
+            // Update Global State
+            aiDetectedType = (result.primaryCategory || 'other').toLowerCase();
+            aiQualityScore = result.qualityScore || 5;
+
+            // Update Advanced UI
+            const classificationBox = document.getElementById('classificationOutput');
+            classificationBox.style.display = 'block';
+            document.getElementById('primaryDisplay').innerText = result.primaryCategory;
+            document.getElementById('subDisplay').innerText = result.subCategory;
+
+            const sellingTag = document.getElementById('sellingTag');
+            sellingTag.innerText = `Selling: ${result.isSellingAdvisable}`;
+            sellingTag.className = `tag ${result.isSellingAdvisable === 'Yes' ? 'tag-success' : 'tag-warning'}`;
+
+            const actionTag = document.getElementById('actionTag');
+            actionTag.innerText = `Action: ${result.recommendedAction}`;
+            actionTag.className = 'tag tag-info';
+
+            const valueTag = document.getElementById('valueTag');
+            valueTag.innerText = `Value: ${result.estimatedRecoveryValue?.toUpperCase()}`;
+            valueTag.className = 'tag tag-success';
+
+            const impactText = document.getElementById('impactText');
+            impactText.innerText = `🌍 Impact: ${result.environmentalImpact}`;
+
+            // Sync Manual Override Radios
+            const typeMap = {
+                'recyclable waste': 'recyclable',
+                'organic waste': 'organic',
+                'e-waste': 'ewaste',
+                'construction & demolition waste': 'recyclable',
+                'hazardous / special waste': 'other',
+                'non-recyclable / residual waste': 'other'
+            };
+
+            const radioValue = typeMap[aiDetectedType] || 'other';
+            const radio = document.querySelector(`input[name="wasteType"][value="${radioValue}"]`);
+            if (radio) radio.checked = true;
+
+            // LOCK INPUTS: Make Non-Changeable as requested
+            wasteRadios.forEach(r => r.disabled = true);
+            document.getElementById('manualTypeSelection').style.opacity = '0.6';
+            document.getElementById('manualTypeSelection').style.pointerEvents = 'none';
+
+            // Show Analysis Result in the pricing box too
+            document.getElementById('aiAssessmentArea').innerHTML = `
+                <div style="display: flex; justify-content: space-between; align-items: center;">
+                    <h4 style="color: var(--primary-color); margin-bottom: 0.5rem; font-size: 1.1rem; letter-spacing: 0.5px;">📋 AI Assessment</h4>
+                    <button type="button" onclick="location.reload()" class="btn btn-secondary" style="padding: 2px 10px; font-size: 0.7rem;">Reset</button>
+                </div>
+                
+                <div style="display: flex; gap: 10px; margin-bottom: 1rem;">
+                    <span class="tag tag-success">✔ Optimal: ${result.isSellingAdvisable === 'Yes' ? 'Resell' : 'Recycle'}</span>
+                    <span class="tag tag-info">Accuracy: ${(result.confidence * 100).toFixed(0)}%</span>
+                </div>
+
+                <div style="font-size: 1rem; color: var(--text-color); margin-bottom: 10px;">
+                    <strong style="color: var(--primary-color)">${result.subCategory.toUpperCase()}</strong> detected.
+                </div>
+                
+                <!-- Decision Support Box -->
+                <div style="background: rgba(56, 189, 248, 0.1); border-left: 4px solid var(--accent-color); padding: 1.25rem; margin-bottom: 1.5rem; border-radius: 8px;">
+                    <strong style="color: var(--accent-color); font-size: 0.95rem; margin-bottom: 6px; display: block;">💡 Decision Support</strong>
+                    <p style="margin: 0; font-size: 0.95rem; color: var(--text-color); line-height: 1.5;">
+                        ${result.recommendedAction}. Selling for <strong>Reuse</strong> yields <strong>3x higher value</strong> than recycling materials.
+                    </p>
+                </div>
+
+                <div style="display: flex; gap: 10px; font-size: 0.75rem; margin-bottom: 12px;">
+                     <span class="tag ${aiQualityScore > 7 ? 'tag-success' : (aiQualityScore < 4 ? 'tag-warning' : 'tag-info')}">
+                     Quality Score: ${aiQualityScore}/10
+                   </span>
+                </div>
+
+                <div style="font-size: 0.85rem; color: var(--text-light); margin-bottom: 15px; font-style: italic; line-height: 1.4; border-left: 2px solid var(--primary-color); padding-left: 10px;">
+                    "${result.analysis}"
+                </div>
+
+                <!-- Suggested Pathway -->
+                <div style="padding: 1.25rem; background: rgba(143, 216, 160, 0.05); border-radius: 12px; border: 1px solid rgba(143, 216, 160, 0.15); margin-bottom: 1rem;">
+                    <small style="color: var(--text-light); text-transform: uppercase; font-size: 0.7rem; letter-spacing: 1px; display: block; margin-bottom: 8px;">Suggested Pathway</small>
+                    <div style="display: flex; align-items: center; gap: 10px;">
+                        <span style="font-size: 2rem;">🔄</span>
+                        <div>
+                            <strong style="color: var(--primary-color); font-size: 1.1rem;">Refurbish & Resell</strong>
+                            <p style="margin: 0; font-size: 0.85rem; color: var(--text-light);">High demand for parts</p>
+                        </div>
+                    </div>
+                </div>
+
+                <div style="font-size: 0.85rem; color: var(--primary-color); opacity: 0.8; font-style: italic; margin-top: 1rem;">
+                    🌍 Impact: ${result.environmentalImpact}
+                </div>
+            `;
+
+            // Show listing actions
+            document.getElementById('listingActions').style.display = 'flex';
+
+            // Scroll to results
+            document.getElementById('pricingResult').scrollIntoView({ behavior: 'smooth', block: 'center' });
+
+            // Trigger Calc
+            updateEstimatedPrice();
+        }
+
+        // Check for TRASHTALK pre-fill from other pages
+        window.addEventListener('load', () => {
+            const prefill = localStorage.getItem('tt_prefill');
+            if (prefill) {
+                const data = JSON.parse(prefill);
+                localStorage.removeItem('tt_prefill'); // Clean up
+                setTimeout(() => {
+                    window.handleAIResult(data);
+                    document.getElementById('uploadText').innerText = "Imported from TRASHTALK ✅";
+                }, 500);
+            }
+        });
+
+        // Event Listeners
+        const fileInput = document.getElementById('wasteImage');
+        if (fileInput) {
+            fileInput.addEventListener('change', async function (e) {
+                if (this.files && this.files[0]) {
+                    const file = this.files[0];
+                    document.getElementById('uploadText').innerText = "Analyzing " + file.name + "...";
+
+                    try {
+                        const result = await window.PricingEngine.analyzeWasteImage(file);
+                        handleAIResult(result);
+                        document.getElementById('uploadText').innerText = "Analysis Complete! ✅";
+                    } catch (err) {
+                        console.error(err);
+                        document.getElementById('uploadText').innerText = "Error analyzing. Try again.";
+                    }
+                }
+            });
+        }
+
+        [quantityInput, unitSelect, conditionSelect].forEach(el => {
+            if (el) el.addEventListener('input', updateEstimatedPrice);
+        });
+
+        wasteRadios.forEach(radio => {
+            radio.addEventListener('change', updateEstimatedPrice);
+        });
+
+        function listToMarketplace() {
+            // [NEW] Auth Check
+            if (!window.currentUser) {
+                alert("You must be logged in to sell items!");
+                window.location.href = 'login.html';
+                return;
+            }
+
+            const file = document.getElementById('wasteImage').files[0];
+            const reader = new FileReader();
+
+            reader.onload = function (e) {
+                const imgData = e.target.result;
+                const price = localStorage.getItem('last_price') || "Rs.0";
+                const title = document.getElementById('primaryDisplay').innerText + " (" + document.getElementById('subDisplay').innerText + ")";
+
+                const newItem = {
+                    id: 'M' + Date.now(),
+                    title: title,
+                    type: window.aiDetectedType || "Mixed", // [NEW] Save Type
+                    condition: document.getElementById('conditionSelect').value, // [NEW] Save Condition
+                    price: price,
+                    img: imgData,
+                    seller: window.currentUser.displayName || window.currentUser.email.split('@')[0],
+                    distance: (Math.random() * 5).toFixed(1) + " km",
+                    quantity: document.getElementById('quantityInput').value + " " + document.getElementById('unitSelect').value
+                };
+
+                if (window.MarketplaceItems) {
+                    window.MarketplaceItems.push(newItem);
+                    if (window.syncMarketplace) window.syncMarketplace();
+
+                    // [NEW] Sync with Collector Portal (Global Visibility)
+                    // Create a corresponding Pickup Job for this item
+                    const pickupJob = {
+                        id: newItem.id, // Match ID for consistency
+                        type: newItem.type,
+                        weight: parseFloat(newItem.quantity) || 5, // Fallback
+                        payout: Math.max(10, Math.floor(parseFloat(price.replace(/[^0-9.]/g, '') || 0) * 0.1)), // 10% computed commission or min 10
+                        pickupLoc: { lat: 28.5 + (Math.random() * 0.1), lng: 77.2 + (Math.random() * 0.1) }, // Mock location
+                        pickupAddress: "Seller: " + newItem.seller,
+                        dropAddress: "Regional Aggregation Center",
+                        status: 'Unassigned',
+                        timestamp: Date.now(),
+                        img: imgData
+                    };
+
+                    const currentOrders = JSON.parse(localStorage.getItem('ActiveOrders') || '[]');
+                    currentOrders.push(pickupJob);
+                    localStorage.setItem('ActiveOrders', JSON.stringify(currentOrders));
+
+                    // Trigger update for active windows
+                    if (window.syncOrders) {
+                        window.ActiveOrders = currentOrders;
+                        window.syncOrders();
+                    }
+                }
+
+                document.getElementById('successOverlay').style.display = 'flex';
+                if (window.showEcoQuote) window.showEcoQuote('listing');
+            };
+
+            if (file) {
+                reader.readAsDataURL(file);
+            } else {
+                alert("Please upload an image first.");
+            }
+        }
+
+        window.sendToRecycler = function () {
+            // [NEW] Capture Item for Discard Page
+            const titleEl = document.getElementById('primaryDisplay');
+            const subEl = document.getElementById('subDisplay');
+            const file = document.getElementById('wasteImage').files[0];
+
+            const title = titleEl ? titleEl.innerText : "Unidentified Waste";
+            const sub = subEl ? subEl.innerText : "Mixed";
+
+            // Helper to save and go
+            const saveAndRedirect = (imgBase64) => {
+                const item = {
+                    id: 'DISCARD-' + Date.now(),
+                    title: title,
+                    subTitle: sub,
+                    img: imgBase64 || 'https://via.placeholder.com/150',
+                    timestamp: Date.now()
+                };
+
+                const current = JSON.parse(localStorage.getItem('PendingDiscards') || '[]');
+                current.push(item);
+                localStorage.setItem('PendingDiscards', JSON.stringify(current));
+
+                window.location.href = 'discarded.html';
+            };
+
+            if (file) {
+                const reader = new FileReader();
+                reader.onload = (e) => saveAndRedirect(e.target.result);
+                reader.readAsDataURL(file);
+            } else {
+                saveAndRedirect(null);
+            }
+        }
+    </script>
+
+    <!-- Success Overlay -->
+    <div id="successOverlay"
+        style="display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(15, 17, 21, 0.95); z-index: 9999; backdrop-filter: blur(10px); justify-content: center; align-items: center; text-align: center;">
+        <div class="card"
+            style="max-width: 400px; padding: 3rem; border: 1px solid var(--primary-color); box-shadow: var(--glow);">
+            <div style="font-size: 4rem; margin-bottom: 1.5rem;">✨</div>
+            <h2 style="color: var(--primary-color); margin-bottom: 0.5rem;">Listed Successfully!</h2>
+            <p style="color: var(--text-light); margin-bottom: 2rem;">Your item has been analyzed and added to the
+                marketplace.</p>
+            <a href="marketplace.html" class="btn btn-primary btn-block">Visit Marketplace</a>
+        </div>
+    </div>
+
+</body>
+
+</html>
+<script src="script.js"></script>
+<script type="module" src="js/nav-loader.js"></script>
+<script src="js/trashtalk.js"></script>
+<script src="js/matching-engine.js"></script>
+<script src="js/collector-portal.js"></script>
+<script src="js/eco-notifications.js"></script>
+<script src="js/emergency-mode.js"></script>

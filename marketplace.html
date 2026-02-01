@@ -1,0 +1,607 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Marketplace - WREP</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="style.css">
+    <style>
+        .marketplace-layout {
+            display: grid;
+            grid-template-columns: 280px 1fr;
+            gap: 2rem;
+            align-items: start;
+        }
+
+        @media (max-width: 768px) {
+            .marketplace-layout {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        .filter-section {
+            padding: 1.5rem;
+            background: var(--card-bg);
+            border-radius: var(--radius-md);
+            box-shadow: var(--shadow-sm);
+        }
+
+        .filter-group {
+            margin-bottom: 1.5rem;
+        }
+
+        .filter-title {
+            font-weight: 600;
+            margin-bottom: 0.75rem;
+            display: block;
+        }
+
+        .checkbox-label {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            margin-bottom: 6px;
+            font-size: 0.95rem;
+            color: var(--text-color);
+            cursor: pointer;
+        }
+
+        .listing-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+            gap: 1.5rem;
+        }
+
+        .listing-card {
+            background: var(--card-bg);
+            /* Dark theme variable */
+            border-radius: var(--radius-md);
+            overflow: hidden;
+            box-shadow: var(--shadow-sm);
+            transition: transform 0.2s;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .listing-card:hover {
+            transform: translateY(-3px);
+            box-shadow: var(--shadow-md);
+        }
+
+        .listing-img {
+            height: 180px;
+            background-color: #2b2b2b;
+            /* Dark placeholder */
+            position: relative;
+        }
+
+        .listing-img img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+
+        .listing-content {
+            padding: 1rem;
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .listing-price {
+            font-size: 1.25rem;
+            font-weight: 700;
+            color: var(--primary-color);
+            margin-bottom: 0.5rem;
+        }
+
+        .listing-meta {
+            font-size: 0.85rem;
+            color: var(--text-light);
+            display: flex;
+            justify-content: space-between;
+            margin-top: auto;
+            padding-top: 1rem;
+        }
+
+        /* Cart Sidebar & Icon */
+        .cart-toggle {
+            position: fixed;
+            bottom: 30px;
+            right: 30px;
+            width: 70px;
+            height: 70px;
+            background: var(--primary-color);
+            color: black;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.5rem;
+            cursor: pointer;
+            box-shadow: 0 10px 25px rgba(143, 216, 160, 0.4);
+            z-index: 9999;
+            transition: all 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+        }
+
+        .cart-toggle:hover {
+            transform: scale(1.1) rotate(-10deg);
+        }
+
+        .cart-count {
+            position: absolute;
+            top: 0;
+            right: 0;
+            background: #ef4444;
+            color: white;
+            width: 24px;
+            height: 24px;
+            border-radius: 50%;
+            font-size: 0.75rem;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: bold;
+            border: 2px solid var(--bg-color);
+        }
+
+        .cart-sidebar {
+            position: fixed;
+            top: 0;
+            right: -400px;
+            width: 400px;
+            height: 100vh;
+            background: var(--card-bg);
+            border-left: 1px solid var(--border-color);
+            z-index: 10001;
+            box-shadow: -10px 0 30px rgba(0, 0, 0, 0.5);
+            transition: right 0.4s cubic-bezier(0.075, 0.82, 0.165, 1);
+            display: flex;
+            flex-direction: column;
+        }
+
+        .cart-sidebar.open {
+            right: 0;
+        }
+
+        .cart-header {
+            padding: 2rem;
+            border-bottom: 1px solid var(--border-color);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .cart-items {
+            flex: 1;
+            padding: 1.5rem;
+            overflow-y: auto;
+        }
+
+        .cart-item {
+            display: flex;
+            gap: 1rem;
+            margin-bottom: 1.5rem;
+            padding-bottom: 1.5rem;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+        }
+
+        .cart-item img {
+            width: 60px;
+            height: 60px;
+            object-fit: cover;
+            border-radius: 8px;
+        }
+
+        .cart-footer {
+            padding: 2rem;
+            border-top: 1px solid var(--border-color);
+            background: rgba(0, 0, 0, 0.2);
+        }
+    </style>
+</head>
+
+<body>
+
+    <!-- Header -->
+    <header>
+        <div class="container">
+            <nav>
+                <a href="index.html" class="logo" style="display: flex; align-items: center; text-decoration: none;">
+                    <img src="logo_final.jpg" alt="Logo" style="height: 55px; width: auto; margin-right: 10px;">
+                    <span style="font-size: 1.5rem; font-weight: bold; color: var(--text-color);">नगर<span
+                            style="font-family: sans-serif;">CYCLE</span></span>
+                </a>
+                <ul class="nav-links">
+                    <li><a href="index.html">Home</a></li>
+                    <li><a href="listing.html">List Waste</a></li>
+                    <li><a href="marketplace.html" class="active">Marketplace</a></li>
+                    <li><a href="rewards.html">Rewards</a></li>
+                    <li><a href="discarded.html">Discard Waste</a></li>
+
+                    <!-- Auth Item (Dynamic) -->
+                    <li id="auth-item">
+                        <a href="login.html" class="btn btn-primary"
+                            style="padding: 4px 12px; font-size: 0.9rem; color: black;">Login</a>
+                    </li>
+                </ul>
+            </nav>
+        </div>
+    </header>
+
+    <div class="container" style="padding-top: 2rem; padding-bottom: 2rem;">
+
+        <div class="marketplace-layout">
+
+            <!-- Sidebar Filters -->
+            <aside class="filter-section">
+                <div style="display: flex; justify-content: space-between; margin-bottom: 1rem;">
+                    <h3>Filters</h3>
+                    <a href="#" onclick="clearFilters()"
+                        style="font-size: 0.9rem; color: var(--primary-color);">Clear</a>
+                </div>
+
+                <!-- Waste Type -->
+                <div class="filter-group">
+                    <label class="filter-title">Waste Type</label>
+                    <label class="checkbox-label"><input type="checkbox" name="type" value="All" checked
+                            onchange="toggleAllTypes(this)"> All Types</label>
+                    <label class="checkbox-label"><input type="checkbox" name="type" value="Organic"
+                            class="type-filter"> Organic</label>
+                    <label class="checkbox-label"><input type="checkbox" name="type" value="Recyclable"
+                            class="type-filter"> Recyclable</label>
+                    <label class="checkbox-label"><input type="checkbox" name="type" value="Construction"
+                            class="type-filter"> Construction</label>
+                    <label class="checkbox-label"><input type="checkbox" name="type" value="E-Waste"
+                            class="type-filter"> E-Waste</label>
+                </div>
+
+                <!-- Condition -->
+                <div class="filter-group">
+                    <label class="filter-title">Condition</label>
+                    <label class="checkbox-label"><input type="checkbox" name="condition" value="Segregated"
+                            class="cond-filter"> Segregated</label>
+                    <label class="checkbox-label"><input type="checkbox" name="condition" value="Mixed"
+                            class="cond-filter"> Mixed</label>
+                </div>
+
+                <!-- Distance -->
+                <div class="filter-group">
+                    <label class="filter-title">Distance (Max: <span id="distVal">10</span>km)</label>
+                    <input type="range" id="distRange" class="range-slider" min="1" max="50" value="10"
+                        oninput="document.getElementById('distVal').innerText = this.value">
+                    <div
+                        style="display: flex; justify-content: space-between; font-size: 0.8rem; margin-top: 5px; color: var(--text-light);">
+                        <span>1km</span>
+                        <span>50km</span>
+                    </div>
+                </div>
+
+                <!-- Price Range -->
+                <div class="filter-group">
+                    <label class="filter-title">Price Range</label>
+                    <div style="display: flex; gap: 8px;">
+                        <input type="number" id="minPrice" class="form-control" placeholder="Min">
+                        <input type="number" id="maxPrice" class="form-control" placeholder="Max">
+                    </div>
+                </div>
+
+                <button class="btn btn-primary btn-block" onclick="applyFilters()">Apply Filters</button>
+
+                <!-- Nearest Processors Widget -->
+                <div
+                    style="margin-top: 2rem; background: var(--card-bg); padding: 1rem; border: 1px solid var(--border-color); border-radius: var(--radius-md);">
+                    <h4 style="margin-bottom: 1rem;">Nearest Active Buyers</h4>
+                    <ul style="list-style: none; padding: 0;">
+                        <li
+                            style="margin-bottom: 0.75rem; display: flex; align-items: center; gap: 0.5rem; font-size: 0.9rem;">
+                            <span style="color: var(--success-color);">●</span> <strong>EcoPlast Recyclers</strong>
+                            <span style="color: var(--text-light); margin-left: auto;">0.8km</span>
+                        </li>
+                        <li
+                            style="margin-bottom: 0.75rem; display: flex; align-items: center; gap: 0.5rem; font-size: 0.9rem;">
+                            <span style="color: var(--success-color);">●</span> <strong>City Scrap Metal</strong> <span
+                                style="color: var(--text-light); margin-left: auto;">1.2km</span>
+                        </li>
+                    </ul>
+                </div>
+            </aside>
+
+            <!-- Main Content -->
+            <main>
+                <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 1.5rem;">
+                    <h2>Fresh Listings</h2>
+                    <select class="form-control" style="width: auto;">
+                        <option>Sort by: Newest</option>
+                        <option>Sort by: Price Low to High</option>
+                        <option>Sort by: Distance</option>
+                    </select>
+                </div>
+
+                <div class="listing-grid" id="marketplaceGrid">
+                    <!-- Real Items Rendered Here -->
+                </div>
+
+                <div style="text-align: center; margin-top: 2rem;">
+                    <button class="btn btn-secondary">Load More</button>
+                </div>
+            </main>
+        </div>
+    </div>
+
+    <!-- Product Details Modal -->
+    <div id="productModal" class="portal-overlay" style="display: none;">
+        <div class="portal-close" onclick="closeProductModal()">&times;</div>
+        <div class="portal-content" style="max-width: 800px;">
+            <div class="mission-card" style="display: grid; grid-template-columns: 1fr 1fr; gap: 2rem; padding: 2rem;">
+                <div id="modalImageContainer">
+                    <img id="modalImage" src="" alt="Product"
+                        style="width: 100%; height: 300px; object-fit: cover; border-radius: var(--radius-md);">
+                </div>
+                <div>
+                    <h2 id="modalTitle" style="margin-top: 0; color: var(--primary-color);"></h2>
+                    <div id="modalPrice" style="font-size: 1.5rem; font-weight: bold; margin-bottom: 1rem;"></div>
+                    <p id="modalDesc" style="color: var(--text-light); margin-bottom: 1.5rem;"></p>
+
+                    <div
+                        style="margin-bottom: 2rem; padding: 1rem; background: rgba(255,255,255,0.03); border-radius: var(--radius-sm);">
+                        <div style="font-size: 0.9rem; margin-bottom: 0.5rem;">Seller: <span id="modalSeller"
+                                style="color: var(--secondary-color);"></span></div>
+                        <div style="font-size: 0.9rem;">Distance: <span id="modalDistance"></span></div>
+                    </div>
+
+                    <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 1rem;">
+                        <button class="btn btn-secondary btn-block" onclick="addToCart()">Add to Cart</button>
+                        <button class="btn btn-primary btn-block" onclick="buyNow()">Buy Now</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Floating Cart Icon -->
+    <div class="cart-toggle" onclick="toggleCart()">
+        🛒
+        <div id="cartCountBadge" class="cart-count">0</div>
+    </div>
+
+    <!-- Cart Sidebar -->
+    <div id="cartSidebar" class="cart-sidebar">
+        <div class="cart-header">
+            <h2 style="margin: 0;">Your Cart</h2>
+            <div class="portal-close" onclick="toggleCart()" style="position: static; font-size: 1.5rem;">&times;</div>
+        </div>
+
+        <div id="cartItemsList" class="cart-items">
+            <!-- Items rendered here -->
+            <div style="text-align: center; color: var(--text-light); opacity: 0.5; margin-top: 4rem;">
+                Your cart is empty.
+            </div>
+        </div>
+
+        <div class="cart-footer">
+            <div style="display: flex; justify-content: space-between; margin-bottom: 1.5rem;">
+                <span style="color: var(--text-light);">Total Estimate</span>
+                <span id="cartTotalDisplay"
+                    style="font-size: 1.25rem; font-weight: bold; color: var(--primary-color);">Rs.0</span>
+            </div>
+            <button class="btn btn-primary btn-block" style="padding: 1rem;" onclick="checkoutCart()">CHECKOUT
+                MISSION</button>
+        </div>
+    </div>
+
+</body>
+
+</html>
+<script src="js/matching-engine.js"></script>
+<script src="js/collector-portal.js"></script>
+<script src="js/eco-notifications.js"></script>
+<script src="js/emergency-mode.js"></script>
+
+<script src="https://checkout.razorpay.com/v1/checkout.js"></script>
+<script>
+    let currentItem = null;
+    let cart = JSON.parse(localStorage.getItem('shoppingCart') || '[]');
+
+    // Unified Modal Function
+    window.openProductModal = function (title, price, img, seller, distance, id) {
+        currentItem = { title, price, img, seller, distance, id };
+        document.getElementById('modalTitle').innerText = title;
+        document.getElementById('modalPrice').innerText = price;
+        document.getElementById('modalImage').src = img;
+        document.getElementById('modalSeller').innerText = seller;
+        document.getElementById('modalDistance').innerText = distance;
+        document.getElementById('modalDesc').innerText = "Premium quality " + title.toLowerCase() + " sourced from sustainable collection points. Hand-inspected for usability and value.";
+
+        document.getElementById('productModal').style.display = 'block';
+        document.body.style.overflow = 'hidden';
+    };
+
+    window.closeProductModal = function () {
+        document.getElementById('productModal').style.display = 'none';
+        document.body.style.overflow = 'auto';
+    };
+
+    window.toggleCart = function () {
+        const sidebar = document.getElementById('cartSidebar');
+        sidebar.classList.toggle('open');
+        renderCart();
+    };
+
+    window.addToCart = function () {
+        // Keep the original listing ID as 'listingId' if we want to distinguish,
+        // but for removal we need the original item ID.
+        cart.push({ ...currentItem, cartInstanceId: Date.now() });
+        saveCart();
+        closeProductModal();
+        if (window.showEcoQuote) window.showEcoQuote('purchase');
+        renderCart();
+        // Open sidebar to show success
+        setTimeout(() => document.getElementById('cartSidebar').classList.add('open'), 500);
+    };
+
+    window.removeFromCart = function (id) {
+        cart = cart.filter(item => item.id !== id);
+        saveCart();
+        renderCart();
+    };
+
+    function saveCart() {
+        localStorage.setItem('shoppingCart', JSON.stringify(cart));
+        updateCartBadge();
+    }
+
+    function updateCartBadge() {
+        const badge = document.getElementById('cartCountBadge');
+        badge.innerText = cart.length;
+        badge.style.display = cart.length > 0 ? 'flex' : 'none';
+    }
+
+    function renderCart() {
+        const list = document.getElementById('cartItemsList');
+        const totalDisplay = document.getElementById('cartTotalDisplay');
+
+        if (cart.length === 0) {
+            list.innerHTML = `<div style="text-align: center; color: var(--text-light); opacity: 0.5; margin-top: 4rem;">Your cart is empty.</div>`;
+            totalDisplay.innerText = 'Rs.0';
+            return;
+        }
+
+        let total = 0;
+        list.innerHTML = cart.map(item => {
+            const priceNum = parseInt(item.price.replace('Rs.', ''));
+            total += priceNum;
+            return `
+                <div class="cart-item">
+                    <img src="${item.img}" alt="${item.title}">
+                    <div style="flex:1">
+                        <div style="font-weight:600">${item.title}</div>
+                        <div style="color:var(--primary-color)">${item.price}</div>
+                    </div>
+                    <div onclick="removeFromCart(${item.id})" style="cursor:pointer; color:#ef4444">🗑️</div>
+                </div>
+            `;
+        }).join('');
+
+        totalDisplay.innerText = 'Rs.' + total;
+    }
+
+    window.buyNow = function () {
+        localStorage.setItem('checkoutItem', JSON.stringify(currentItem));
+        window.location.href = 'payment.html';
+    };
+
+    window.checkoutCart = function () {
+        if (cart.length === 0) {
+            alert("Cart is empty!");
+            return;
+        }
+        // For simplicity, we checkout the first item or a summary
+        // In a real app, you'd pass the whole array
+        localStorage.setItem('checkoutItem', JSON.stringify(cart[0]));
+        window.location.href = 'payment.html';
+    };
+
+    function renderMarketplace(data) {
+        const grid = document.getElementById('marketplaceGrid');
+        const items = data || window.MarketplaceItems || [];
+
+        if (items.length === 0) {
+            grid.innerHTML = `<div style="grid-column: 1/-1; text-align: center; padding: 4rem; color: var(--text-light); opacity: 0.5;">
+                <div style="font-size: 3rem; margin-bottom: 1rem;">📭</div>
+                <h3>No items match your filters.</h3>
+                <p>Try adjusting your search criteria.</p>
+                <button class="btn btn-secondary" onclick="clearFilters()" style="margin-top: 1rem;">Clear Filters</button>
+            </div>`;
+            return;
+        }
+
+        grid.innerHTML = items.map(item => `
+            <div class="listing-card" id="item-${item.id}">
+                <div class="listing-img">
+                    <span class="badge">Verified</span>
+                    <img src="${item.img}" alt="${item.title}">
+                </div>
+                <div class="listing-content">
+                    <h3 style="font-size: 1.1rem; margin-bottom: 0.5rem;">${item.title}</h3>
+                    <div class="listing-price">${item.price}</div>
+                    <p style="font-size: 0.9rem; color: var(--text-light); margin-bottom: 0.5rem;">Quantity: ${item.quantity}</p>
+                    <button class="btn btn-primary btn-block" style="text-align: center; margin-top: 0.5rem;" 
+                        onclick="openProductModal('${item.title.replace(/'/g, "\\'")}', '${item.price}', '${item.img}', '${item.seller}', '${item.distance}', '${item.id}')">
+                        View Details
+                    </button>
+                    <div class="listing-meta">
+                        <span>🏢 ${item.seller}</span>
+                        <span>📍 ${item.distance}</span>
+                    </div>
+                </div>
+            </div>
+        `).join('');
+    }
+
+    // Filter Logic
+    window.toggleAllTypes = function (source) {
+        const checkboxes = document.querySelectorAll('.type-filter');
+        checkboxes.forEach(cb => cb.checked = source.checked);
+    };
+
+    window.clearFilters = function () {
+        // Reset Inputs
+        document.querySelectorAll('input[type="checkbox"]').forEach(cb => cb.checked = false);
+        document.querySelector('input[name="type"][value="All"]').checked = true;
+        document.querySelectorAll('.type-filter').forEach(cb => cb.checked = true);
+
+        document.getElementById('distRange').value = 10;
+        document.getElementById('distVal').innerText = 10;
+        document.getElementById('minPrice').value = '';
+        document.getElementById('maxPrice').value = '';
+
+        // Reset Grid
+        renderMarketplace(window.MarketplaceItems);
+    };
+
+    window.applyFilters = function () {
+        const allItems = window.MarketplaceItems || [];
+
+        // 1. Waste Type
+        const allChecked = document.querySelector('input[name="type"][value="All"]').checked;
+        const typeChecks = Array.from(document.querySelectorAll('.type-filter:checked')).map(cb => cb.value);
+
+        // 2. Condition
+        const condChecks = Array.from(document.querySelectorAll('.cond-filter:checked')).map(cb => cb.value);
+
+        // 3. Distance
+        const maxDist = parseInt(document.getElementById('distRange').value);
+
+        // 4. Price
+        const minP = parseInt(document.getElementById('minPrice').value) || 0;
+        const maxP = parseInt(document.getElementById('maxPrice').value) || 999999;
+
+        const filtered = allItems.filter(item => {
+            // Type Match
+            const typeMatch = allChecked || typeChecks.some(t => (item.type || item.title).includes(t));
+
+            // Condition Match
+            const condMatch = condChecks.length === 0 || condChecks.includes(item.condition);
+
+            // Distance Match
+            const itemDist = parseFloat(item.distance) || 0; // "1.2 km" -> 1.2
+            const distMatch = itemDist <= maxDist;
+
+            // Price Match
+            const itemPrice = parseInt((item.price || "0").replace(/[^0-9]/g, ''));
+            const priceMatch = itemPrice >= minP && itemPrice <= maxP;
+
+            return typeMatch && condMatch && distMatch && priceMatch;
+        });
+
+        console.log("Filtered items:", filtered.length);
+        renderMarketplace(filtered);
+    };
+
+    // Initial Load
+    renderMarketplace();
+    updateCartBadge();
+</script>

@@ -1,0 +1,241 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Secure Checkout - नगरCYCLE</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="style.css">
+    <style>
+        .checkout-container {
+            max-width: 900px;
+            margin: 4rem auto;
+            display: grid;
+            grid-template-columns: 1.5fr 1fr;
+            gap: 2rem;
+        }
+
+        .payment-methods {
+            display: grid;
+            gap: 1rem;
+        }
+
+        .method-card {
+            background: var(--card-bg);
+            border: 1px solid var(--border-color);
+            padding: 1.5rem;
+            border-radius: var(--radius-md);
+            cursor: pointer;
+            transition: all 0.3s ease;
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+        }
+
+        .method-card:hover {
+            border-color: var(--primary-color);
+            background: rgba(143, 216, 160, 0.05);
+        }
+
+        .method-card.active {
+            border-color: var(--primary-color);
+            background: rgba(143, 216, 160, 0.1);
+            box-shadow: 0 0 20px rgba(143, 216, 160, 0.1);
+        }
+
+        .order-summary {
+            background: var(--card-bg);
+            border: 1px solid var(--border-color);
+            padding: 2rem;
+            border-radius: var(--radius-md);
+            height: fit-content;
+        }
+
+        .Summary-item {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 0.75rem;
+            color: var(--text-light);
+        }
+    </style>
+</head>
+
+<body>
+    <header>
+        <div class="container">
+            <nav>
+                <a href="index.html" class="logo" style="display: flex; align-items: center; text-decoration: none;">
+                    <img src="logo_final.jpg" alt="Logo" style="height: 55px; width: auto; margin-right: 10px;">
+                    <span style="font-size: 1.5rem; font-weight: bold; color: var(--text-color);">नगर<span
+                            style="font-family: sans-serif;">CYCLE</span></span>
+                </a>
+            </nav>
+        </div>
+    </header>
+
+    <div class="container">
+        <div class="checkout-container">
+            <main>
+                <h1 style="margin-bottom: 2rem;">Secure Checkout</h1>
+
+                <h3 style="margin-bottom: 1rem;">Select Payment Method</h3>
+                <div class="payment-methods">
+                    <div class="method-card active" onclick="selectMethod('razorpay')">
+                        <div style="font-size: 1.5rem;">💳</div>
+                        <div>
+                            <strong>UPI / Cards / NetBanking</strong>
+                            <div style="font-size: 0.8rem; color: var(--text-light);">Secure payment via Razorpay</div>
+                        </div>
+                    </div>
+                    <div class="method-card" onclick="selectMethod('cash')">
+                        <div style="font-size: 1.5rem;">💵</div>
+                        <div>
+                            <strong>Cash on Pickup</strong>
+                            <div style="font-size: 0.8rem; color: var(--text-light);">Pay directly to the collector
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <button id="payBtn" class="btn btn-primary btn-block" style="margin-top: 2rem; padding: 1.25rem;"
+                    onclick="processPayment()">
+                    Proceed with Checkout
+                </button>
+            </main>
+
+            <aside class="order-summary">
+                <h3 style="margin-bottom: 1.5rem; border-bottom: 1px solid var(--border-color); padding-bottom: 1rem;">
+                    Order Summary</h3>
+                <div id="summaryContent">
+                    <!-- Dynamic Content -->
+                </div>
+                <div style="margin-top: 1.5rem; padding-top: 1rem; border-top: 1px solid var(--border-color);">
+                    <div class="Summary-item" style="color: var(--text-color); font-weight: bold; font-size: 1.2rem;">
+                        <span>Total</span>
+                        <span id="finalTotal">Rs.0</span>
+                    </div>
+                </div>
+            </aside>
+        </div>
+    </div>
+
+    <script src="js/matching-engine.js"></script>
+    <script src="https://checkout.razorpay.com/v1/checkout.js"></script>
+    <script>
+        const itemData = JSON.parse(localStorage.getItem('checkoutItem'));
+        let selectedMethod = 'razorpay';
+
+        document.addEventListener('DOMContentLoaded', () => {
+            if (!itemData) {
+                alert("No item selected for checkout.");
+                window.location.href = 'marketplace.html';
+                return;
+            }
+
+            document.getElementById('summaryContent').innerHTML = `
+                <div style="display: flex; gap: 1rem; margin-bottom: 1.5rem;">
+                    <img src="${itemData.img}" style="width: 80px; height: 80px; object-fit: cover; border-radius: 8px;">
+                    <div>
+                        <div style="font-weight: 600;">${itemData.title}</div>
+                        <div style="font-size: 0.8rem; color: var(--text-light);">Seller: ${itemData.seller}</div>
+                    </div>
+                </div>
+                <div class="Summary-item">
+                    <span>Subtotal</span>
+                    <span>${itemData.price}</span>
+                </div>
+                <div class="Summary-item">
+                    <span>Platform Fee</span>
+                    <span>Rs.5</span>
+                </div>
+            `;
+
+            const priceInt = parseInt(itemData.price.replace(/[^0-9]/g, '')) || 0;
+            const total = priceInt + 5;
+            document.getElementById('finalTotal').innerText = `Rs.${total}`;
+        });
+
+        function selectMethod(method) {
+            selectedMethod = method;
+            document.querySelectorAll('.method-card').forEach(card => card.classList.remove('active'));
+            event.currentTarget.classList.add('active');
+        }
+
+        function processPayment() {
+            if (selectedMethod === 'razorpay') {
+                startRazorpay();
+            } else {
+                completeOrder('Cash');
+            }
+        }
+
+        function startRazorpay() {
+            const amount = (parseInt(itemData.price.replace('Rs.', '')) + 5) * 100; // in paise
+
+            const options = {
+                "key": "rzp_test_YOUR_KEY", // Replace with real key
+                "amount": amount,
+                "currency": "INR",
+                "name": "नगरCYCLE",
+                "description": "Purchase of " + itemData.title,
+                "image": "nav_logo_black.png",
+                "handler": function (response) {
+                    alert("Payment Successful! ID: " + response.razorpay_payment_id);
+                    completeOrder('Online');
+                },
+                "prefill": {
+                    "name": "User Name",
+                    "email": "user@example.com",
+                    "contact": "9999999999"
+                },
+                "theme": {
+                    "color": "#8fd8a0"
+                }
+            };
+            const rzp = new Razorpay(options);
+            rzp.open();
+        }
+
+        function completeOrder(method) {
+            alert(`Order Confirmed via ${method}! \nAI Matching Engine is assigning a collector.`);
+
+            // Safety check for initialization
+            if (!window.ActiveOrders) {
+                const saved = localStorage.getItem('ActiveOrders');
+                window.ActiveOrders = saved ? JSON.parse(saved) : [];
+            }
+
+            // Simulation of Matching Engine trigger
+            if (window.ActiveOrders) {
+                const newJob = {
+                    id: 'MISSION-' + Date.now(),
+                    type: itemData.title,
+                    img: itemData.img,
+                    weight: (itemData.quantity ? itemData.quantity.split(' ')[0] : 5),
+                    pickupLoc: { lat: 28.57, lng: 77.25 },
+                    pickupAddress: itemData.seller + ", Delhi",
+                    dropAddress: "Buyer Location (Sector 4), Delhi",
+                    payout: Math.floor((parseInt(itemData.price.replace(/[^0-9]/g, '')) || 0) * 0.4),
+                    status: 'Unassigned'
+                };
+                window.ActiveOrders.push(newJob);
+                if (window.syncOrders) window.syncOrders();
+            }
+
+            // [NEW] Remove from Marketplace
+            if (itemData.id && window.MarketplaceItems) {
+                window.MarketplaceItems = window.MarketplaceItems.filter(i => i.id !== itemData.id);
+                if (window.syncMarketplace) window.syncMarketplace();
+            }
+
+            // Redirect to Invoice
+            // Wait slightly for creating the sense of "Processing"
+            setTimeout(() => {
+                window.location.href = 'invoice.html';
+            }, 1000);
+        }
+    </script>
+</body>
+
+</html>

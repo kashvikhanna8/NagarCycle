@@ -1,0 +1,156 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Waste-to-Resource Exchange Platform</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="style.css">
+    <link rel="stylesheet" href="css/trashtalk.css">
+</head>
+
+<body>
+
+    <!-- Header -->
+    <header>
+        <div class="container">
+            <nav>
+                <a href="index.html" class="logo" style="display: flex; align-items: center; text-decoration: none;">
+                    <img src="logo_final.jpg" alt="Logo" style="height: 55px; width: auto; margin-right: 10px;">
+                    <span style="font-size: 1.5rem; font-weight: bold; color: var(--text-color);">नगर<span
+                            style="font-family: sans-serif;">CYCLE</span></span>
+                </a>
+                <ul class="nav-links">
+                    <li><a href="index.html" class="active">Home</a></li>
+                    <li><a href="listing.html">List Waste</a></li>
+                    <li><a href="marketplace.html">Marketplace</a></li>
+                    <li><a href="rewards.html">Rewards</a></li>
+                    <li><a href="discarded.html">Discard Waste</a></li>
+                    <li><a href="#" class="btn btn-secondary collector-portal-btn"
+                            style="padding: 4px 12px; font-size: 0.9rem;" onclick="openCollectorPortal()">Collector
+                            Portal</a></li>
+                    <!-- Auth Item (Dynamic) -->
+                    <li id="auth-item">
+                        <a href="login.html" class="btn btn-primary"
+                            style="padding: 4px 12px; font-size: 0.9rem; color: black;">Login</a>
+                    </li>
+                </ul>
+            </nav>
+        </div>
+    </header>
+
+    <!-- Hero Section -->
+    <section class="hero">
+        <script type="module" src="https://unpkg.com/@splinetool/viewer@1.12.46/build/spline-viewer.js"></script>
+        <spline-viewer url="https://prod.spline.design/OzRF9NmvcCSkL8aF/scene.splinecode"></spline-viewer>
+
+        <div class="hero-buttons-container">
+            <a href="listing.html" class="btn btn-primary">List Your Waste</a>
+            <a href="marketplace.html" class="btn btn-primary">Buy Usable Waste</a>
+        </div>
+    </section>
+
+
+
+    <!-- How It Works (Ladder Style) -->
+    <section class="how-it-works-section">
+        <div class="container">
+            <h2 class="section-title">How It Works</h2>
+            <div class="ladder-container">
+                <!-- Step 1 -->
+                <div class="ladder-step">
+                    <div class="step-number">01</div>
+                    <div class="step-content">
+                        <h3>List Your Waste</h3>
+                        <p>Upload photos and details. Our AI instantly categorizes and assesses value.</p>
+                    </div>
+                </div>
+
+                <!-- Connecting Line -->
+                <div class="ladder-line"></div>
+
+                <!-- Step 2 -->
+                <div class="ladder-step right-step">
+                    <div class="step-content">
+                        <h3>AI-Analysis of the Waste</h3>
+                        <p>Receive automatic recovery suggestions: Resell, Recycle, or Upcycle.</p>
+                    </div>
+                    <div class="step-number">02</div>
+                </div>
+
+                <!-- Connecting Line -->
+                <div class="ladder-line"></div>
+
+                <!-- Step 3 -->
+                <div class="ladder-step">
+                    <div class="step-number">03</div>
+                    <div class="step-content">
+                        <h3>Exchange & Earn</h3>
+                        <p>Connect with verified buyers, finish the transaction, and track your impact.</p>
+                    </div>
+                </div>
+
+                <!-- Connecting Line -->
+                <div class="ladder-line"></div>
+
+                <!-- Step 4 -->
+                <div class="ladder-step right-step">
+                    <div class="step-content">
+                        <h3>Land in Landfill</h3>
+                        <p>Ensure your waste is managed so it safely ends up in a landfill.</p>
+                    </div>
+                    <div class="step-number">04</div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Waste Transformation Visualization (Spline 3D) -->
+    <section class="container" style="margin-top: 4rem; margin-bottom: 6rem; text-align: center;">
+        <h2 class="section-title" style="margin-bottom: 0.5rem;">Circular Economy in Action</h2>
+        <p
+            style="color: var(--text-light); margin-bottom: 2rem; max-width: 600px; margin-left: auto; margin-right: auto;">
+            Witness how we transform discarded materials into valuable resources through our advanced zero-waste
+            recovery process.
+        </p>
+        <div
+            style="position: relative; height: 500px; width: 100%; border-radius: var(--radius-lg); overflow: hidden; box-shadow: var(--glow);">
+            <script type="module" src="https://unpkg.com/@splinetool/viewer@1.12.46/build/spline-viewer.js"></script>
+            <spline-viewer url="https://prod.spline.design/kcPMYGzDDN1bI0gm/scene.splinecode"
+                style="background-color: var(--bg-color);"></spline-viewer>
+        </div>
+    </section>
+
+    <!-- Footer -->
+    <footer>
+        <div class="container">
+            <div class="footer-content">
+                <div>
+                    <h4>Waste-to-Resource Platform</h4>
+                    <p>Empowering the circular economy one connection at a time.</p>
+                </div>
+                <div>
+                    <h4>Quick Links</h4>
+                    <ul style="margin-top: 1rem;">
+                        <li><a href="about.html">About Us</a></li>
+                        <li><a href="#">Contact</a></li>
+
+                    </ul>
+                </div>
+            </div>
+
+        </div>
+    </footer>
+
+    <!-- Custom Scripts -->
+    <script src="js/trashtalk.js"></script>
+    <script src="js/matching-engine.js"></script>
+    <script src="js/collector-portal.js"></script>
+    <script src="js/eco-notifications.js"></script>
+    <script src="js/emergency-mode.js"></script>
+</body>
+
+</html>
+<script src="script.js"></script>
+<script type="module" src="js/nav-loader.js"></script>

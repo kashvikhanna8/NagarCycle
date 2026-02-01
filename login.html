@@ -1,0 +1,154 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Login - Waste-to-Resource Platform</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="style.css">
+    <style>
+        .auth-container {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: calc(100vh - 180px);
+            /* Adjust based on header/footer */
+            padding: 2rem 1rem;
+        }
+
+        .auth-card {
+            width: 100%;
+            max-width: 400px;
+            background: var(--card-bg);
+            padding: 2.5rem;
+            border-radius: var(--radius-lg);
+            box-shadow: var(--shadow-lg);
+            border: 1px solid var(--border-color);
+            text-align: center;
+        }
+
+        .auth-logo {
+            margin-bottom: 2rem;
+            display: inline-block;
+        }
+
+        .divider {
+            display: flex;
+            align-items: center;
+            text-align: center;
+            margin: 1.5rem 0;
+            color: var(--text-light);
+            font-size: 0.85rem;
+        }
+
+        .divider::before,
+        .divider::after {
+            content: '';
+            flex: 1;
+            border-bottom: 1px solid var(--border-color);
+        }
+
+        .divider::before {
+            margin-right: .5em;
+        }
+
+        .divider::after {
+            margin-left: .5em;
+        }
+
+        .error-message {
+            color: var(--danger-color);
+            font-size: 0.9rem;
+            margin-bottom: 1rem;
+            display: none;
+            text-align: left;
+        }
+
+        .google-btn {
+            background-color: var(--white);
+            color: #333;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 10px;
+            transition: background-color 0.2s;
+        }
+
+        .google-btn:hover {
+            background-color: #f1f1f1;
+        }
+
+        .auth-toggle {
+            margin-top: 1.5rem;
+            font-size: 0.9rem;
+            color: var(--text-light);
+        }
+
+        .auth-toggle a {
+            color: var(--primary-color);
+            font-weight: 600;
+            cursor: pointer;
+        }
+    </style>
+</head>
+
+<body>
+
+    <!-- Header (Simplified) -->
+    <header>
+        <div class="container">
+            <nav>
+                <a href="index.html" class="logo" style="display: flex; align-items: center; text-decoration: none;">
+                    <img src="logo_final.jpg" alt="Logo" style="height: 55px; width: auto; margin-right: 10px;">
+                    <span style="font-size: 1.5rem; font-weight: bold; color: var(--text-color);">नगर<span
+                            style="font-family: sans-serif;">CYCLE</span></span>
+                </a>
+                <ul class="nav-links">
+                    <li><a href="index.html">Home</a></li>
+                </ul>
+            </nav>
+        </div>
+    </header>
+
+    <!-- Auth Section -->
+    <section class="auth-container">
+        <div class="auth-card">
+            <h2 id="form-title">Welcome Back</h2>
+            <p class="text-light" style="margin-bottom: 2rem;" id="form-subtitle">Login to access your dashboard</p>
+
+            <div id="error-msg" class="error-message"></div>
+
+            <form id="auth-form">
+                <div class="form-group" style="text-align: left;">
+                    <label for="email" class="form-label">Email Address</label>
+                    <input type="email" id="email" class="form-control" placeholder="you@example.com" required>
+                </div>
+
+                <div class="form-group" style="text-align: left;">
+                    <label for="password" class="form-label">Password</label>
+                    <input type="password" id="password" class="form-control" placeholder="••••••••" required>
+                </div>
+
+                <button type="submit" class="btn btn-primary btn-block" id="submit-btn">Login</button>
+            </form>
+
+            <div class="divider">OR</div>
+
+            <button id="google-btn" class="btn btn-block google-btn">
+                <img src="https://www.gstatic.com/firebasejs/ui/2.0.0/images/auth/google.svg" alt="Google" width="20">
+                Continue with Google
+            </button>
+
+            <div class="auth-toggle">
+                <span id="toggle-text">Don't have an account?</span>
+                <a id="toggle-link">Sign Up</a>
+            </div>
+        </div>
+    </section>
+
+    <!-- Script references -->
+    <script type="module" src="js/auth.js"></script>
+</body>
+
+</html>

@@ -1,0 +1,155 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>About Us - NagarCycle</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="style.css">
+    <style>
+        .about-hero {
+            background: linear-gradient(rgba(0, 0, 0, 0.7), rgba(0, 0, 0, 0.7)), url('https://images.unsplash.com/photo-1532996122724-e3c354a0b15b?ixlib=rb-1.2.1&auto=format&fit=crop&w=1950&q=80');
+            background-size: cover;
+            background-position: center;
+            color: white;
+            padding: 4rem 0;
+            text-align: center;
+            margin-bottom: 3rem;
+        }
+
+        .content-section {
+            background: var(--card-bg);
+            padding: 3rem;
+            border-radius: var(--radius-lg);
+            box-shadow: var(--shadow-md);
+            margin-bottom: 3rem;
+            border: 1px solid var(--border-color);
+        }
+
+        .content-section h2 {
+            color: var(--primary-color);
+            margin-bottom: 1.5rem;
+            font-size: 1.8rem;
+        }
+
+        .content-section p {
+            line-height: 1.8;
+            color: var(--text-color);
+            margin-bottom: 1.5rem;
+            font-size: 1.05rem;
+        }
+
+        .highlight-box {
+            background: rgba(143, 216, 160, 0.1);
+            border-left: 4px solid var(--primary-color);
+            padding: 1.5rem;
+            margin: 2rem 0;
+            font-style: italic;
+            color: var(--text-color);
+        }
+    </style>
+</head>
+
+<body>
+
+    <!-- Header -->
+    <header>
+        <div class="container">
+            <nav>
+                <a href="index.html" class="logo" style="display: flex; align-items: center; text-decoration: none;">
+                    <img src="logo_final.jpg" alt="Logo" style="height: 55px; width: auto; margin-right: 10px;">
+                    <span style="font-size: 1.5rem; font-weight: bold; color: var(--text-color);">नगर<span
+                            style="font-family: sans-serif;">CYCLE</span></span>
+                </a>
+                <ul class="nav-links">
+                    <li><a href="index.html">Home</a></li>
+                    <li><a href="listing.html">List Waste</a></li>
+                    <li><a href="discarded.html">Discarded Waste</a></li>
+                    <li><a href="marketplace.html">Marketplace</a></li>
+                </ul>
+            </nav>
+        </div>
+    </header>
+
+    <div class="about-hero">
+        <div class="container">
+            <h1>Our Mission & Vision</h1>
+            <p style="opacity: 0.9; margin-top: 1rem; font-size: 1.2rem;">Redefining Waste. Empowering Cities.</p>
+        </div>
+    </div>
+
+    <div class="container">
+        <div class="content-section">
+            <h2>Turning Waste into Value</h2>
+
+            <p class="highlight-box">
+                "We believe waste is not a problem — it is an untapped resource waiting to be redirected."
+            </p>
+
+            <p>
+                Our Waste-to-Resource Exchange Platform connects citizens, recyclers, informal collectors, and
+                processing hubs through a smart digital system that transforms waste into value. Using AI-based
+                classification, location intelligence, and an inclusive marketplace, we ensure waste moves toward reuse,
+                recycling, composting, or recovery instead of landfills.
+            </p>
+
+            <p>
+                This platform is built in alignment with government initiatives such as the Swachh Bharat Mission, the
+                Solid Waste Management Rules, and the broader vision of a circular economy. By encouraging segregation,
+                responsible disposal, and measurable recovery, we strengthen policy implementation at the ground level
+                through technology.
+            </p>
+
+            <h2>Empowering People</h2>
+            <p>
+                A core part of our mission is social inclusion. We create paid, trackable employment opportunities for
+                informal workers — ragpickers, scrap collectors (bhangaad wala), and waste handlers — integrating them
+                into a formal digital network without displacing their livelihoods. Their work is recognized, recorded,
+                and rewarded with dignity and accountability.
+            </p>
+
+            <h2>Building Smarter Cities</h2>
+            <p>
+                Citizens can list waste easily, recyclers gain access to raw materials efficiently, and the city
+                benefits from real-time impact metrics such as landfill diversion and resource recovery.
+            </p>
+            <p>
+                We are building a marketplace where waste moves like money, data flows like intelligence, and cities
+                finally see waste as a resource, not a burden.
+            </p>
+
+            <div
+                style="text-align: center; margin-top: 3rem; border-top: 1px solid var(--border-color); padding-top: 2rem;">
+                <h3 style="margin-bottom: 1rem;">Our Goal is Simple</h3>
+                <p style="font-size: 1.2rem; font-weight: 500; color: var(--primary-color);">
+                    To make waste flow upward into reuse, recycling, and recovery, building cleaner cities and a
+                    stronger circular economy for the future.
+                </p>
+            </div>
+
+        </div>
+    </div>
+
+    <footer>
+        <div class="container">
+            <div class="footer-content">
+                <div>
+                    <h4>NagarCycle</h4>
+                    <p>Empowering the circular economy one connection at a time.</p>
+                </div>
+                <div>
+                    <h4>Quick Links</h4>
+                    <ul style="margin-top: 1rem;">
+                        <li><a href="index.html">Home</a></li>
+                        <li><a href="listing.html">Get Started</a></li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </footer>
+
+    <script type="module" src="js/nav-loader.js"></script>
+</body>
+
+</html>

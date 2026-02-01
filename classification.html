@@ -1,0 +1,177 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Classification Results - WREP</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="style.css">
+    <style>
+        .result-card {
+            border: 1px solid var(--primary-color);
+            background: rgba(143, 216, 160, 0.05);
+            box-shadow: var(--glow);
+        }
+
+        .decision-alert {
+            background: rgba(56, 189, 248, 0.1);
+            border-left: 4px solid var(--accent-color);
+            padding: 1.25rem;
+            margin-bottom: 2rem;
+            border-radius: var(--radius-md);
+        }
+
+        .recommendation-actions {
+            display: flex;
+            gap: 1rem;
+            margin-top: 1.5rem;
+        }
+    </style>
+</head>
+
+<body>
+
+    <!-- Header -->
+    <header>
+        <div class="container">
+            <nav>
+                <a href="index.html" class="logo">
+                    <img src="nav_logo_black.png" alt="Logo"
+                        style="width: 28px; height: 28px; vertical-align: middle; margin-right: 8px;">
+                    <span>नगरCYCLE</span>
+                </a>
+                <ul class="nav-links">
+                    <li><a href="index.html">Home</a></li>
+                    <li><a href="listing.html">List Waste</a></li>
+                    <li><a href="discarded.html">Discarded Waste</a></li>
+                    <li class="dropdown">
+                        <a href="marketplace.html">Marketplace ▾</a>
+                        <div class="dropdown-content">
+                            <a href="marketplace.html">Organic</a>
+                            <a href="marketplace.html">Recyclable</a>
+                            <a href="marketplace.html">Construction</a>
+                            <a href="marketplace.html">E-Waste</a>
+                        </div>
+                    </li>
+
+                    <!-- Auth Item (Dynamic) -->
+                    <li id="auth-item">
+                        <a href="login.html" class="btn btn-primary"
+                            style="padding: 4px 12px; font-size: 0.9rem; color: black;">Login</a>
+                    </li>
+                </ul>
+            </nav>
+        </div>
+    </header>
+
+    <div class="container" style="padding-top: 3rem; padding-bottom: 3rem;">
+        <div style="max-width: 800px; margin: 0 auto;">
+
+            <div style="text-align: center; margin-bottom: 3rem;">
+                <h1 style="margin-bottom: 0.5rem;">Analysis Complete</h1>
+                <p style="color: var(--text-light);">Based on your input, here is the classification and recommended
+                    path.</p>
+            </div>
+
+            <!-- Classification Result Card -->
+            <div class="card result-card">
+                <div
+                    style="display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 1.5rem;">
+                    <div>
+                        <div style="display: flex; gap: 0.5rem; margin-bottom: 0.5rem;">
+                            <span class="tag tag-success" style="font-size: 0.9rem;">✔ Optimal Pathway: Resell</span>
+                            <span class="tag tag-warning" style="font-size: 0.9rem;">Avoid: Recycling (Value
+                                Loss)</span>
+                        </div>
+                        <h2 id="summaryTitle" style="font-size: 1.8rem; margin: 0; color: var(--text-color);">Waste
+                            Analysis</h2>
+                        <p id="summarySub" style="color: var(--text-light);">Item Classification Summary</p>
+                    </div>
+                    <div style="text-align: right;">
+                        <div id="summaryScore"
+                            style="font-size: 2.5rem; font-weight: bold; color: var(--primary-color); text-shadow: 0 0 10px rgba(143,216,160,0.3);">
+                            -<span style="font-size: 1rem; color: var(--text-light);">/100</span></div>
+                        <div style="font-size: 0.8rem; color: var(--text-light); letter-spacing: 0.5px;">Priority Score
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Decision Support Alert -->
+                <div class="decision-alert">
+                    <strong style="color: var(--accent-color);">💡 Decision Support</strong>
+                    <p style="margin: 0.25rem 0 0; font-size: 0.95rem; color: var(--text-color); line-height: 1.5;">
+                        Selling for <strong style="color: var(--primary-color)">Reuse</strong> yields <strong>3x higher
+                            value</strong> than recycling materials.
+                        We recommend listing this on the marketplace immediately active buyers are nearby.
+                    </p>
+                </div>
+
+                <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 2rem; margin-bottom: 2rem;">
+                    <div>
+                        <h4 style="margin-bottom: 0.5rem; color: var(--secondary-color);">Suggested Pathway</h4>
+                        <div style="display: flex; align-items: center; gap: 0.5rem;">
+                            <span style="font-size: 1.5rem;">🔄</span>
+                            <div>
+                                <strong>Refurbish & Resell</strong>
+                                <p style="font-size: 0.9rem; margin: 0; color: var(--text-light);">High demand for parts
+                                </p>
+                            </div>
+                        </div>
+                    </div>
+                    <div>
+                        <h4
+                            style="margin-bottom: 0.5rem; color: var(--text-light); text-transform: uppercase; font-size: 0.8rem; letter-spacing: 1px;">
+                            Estimated Value</h4>
+                        <div id="summaryValue"
+                            style="font-size: 1.8rem; font-weight: bold; color: var(--primary-color);">₹ -
+                        </div>
+                    </div>
+                </div>
+
+                <hr style="border: 0; border-top: 1px solid rgba(255,255,255,0.1); margin: 2rem 0;">
+
+                <div class="recommendation-actions">
+                    <a href="marketplace.html" class="btn btn-primary btn-block" style="text-align: center;">List on
+                        Marketplace (Resell)</a>
+                    <a href="#" class="btn btn-secondary btn-block" style="text-align: center;">Send to Recycler
+                        (Pickup)</a>
+                </div>
+            </div>
+
+            <!-- Alternative Option -->
+            <div class="card" style="margin-top: 2rem; opacity: 0.8;">
+                <h4 style="margin-bottom: 1rem;">Processing Required?</h4>
+                <p>If the item is not functional, you can send it directly to a certified e-waste dismantling facility.
+                </p>
+                <div style="display: flex; gap: 1rem; margin-top: 1rem;">
+                    <button class="btn btn-secondary" style="font-size: 0.9rem;">Find Dismantlers Nearby</button>
+                </div>
+            </div>
+
+        </div>
+    </div>
+
+    <script>
+        window.addEventListener('load', () => {
+            const analysis = JSON.parse(localStorage.getItem('last_analysis'));
+            const price = localStorage.getItem('last_price');
+
+            if (analysis) {
+                document.getElementById('summaryTitle').innerText = `${analysis.subCategory} (${analysis.primaryCategory})`;
+                document.getElementById('summarySub').innerText = analysis.analysis;
+
+                const score = analysis.qualityScore || analysis.quality_score || 5;
+                document.getElementById('summaryScore').innerHTML = `${score * 10}<span style="font-size: 1rem; color: var(--text-light);">/100</span>`;
+            }
+
+            if (price) {
+                document.getElementById('summaryValue').innerText = price;
+            }
+        });
+    </script>
+</body>
+
+</html>
+<script src="script.js"></script>
+<script type="module" src="js/nav-loader.js"></script>
