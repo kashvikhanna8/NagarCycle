@@ -11,8 +11,8 @@ app.use(cors());
 app.use(express.json());
 // app.use(express.static(__dirname)); // Native Vercel static serving is preferred
 
-const verifyToken = require('../middleware/authMiddleware');
-const aiRoutes = require('../routes/aiRoutes');
+const verifyToken = require('./middleware/authMiddleware');
+const aiRoutes = require('./routes/aiRoutes');
 
 // Routes
 app.use('/api/ai', aiRoutes);
@@ -32,7 +32,7 @@ app.get('/api/test-auth', verifyToken, (req, res) => {
 app.post('/api/ai/chat', async (req, res) => {
     try {
         const { message } = req.body;
-        const { chatWithTrashtalk } = require('../services/aiService');
+        const { chatWithTrashtalk } = require('./services/aiService');
         const reply = await chatWithTrashtalk(message);
         res.json({ reply });
     } catch (err) {
