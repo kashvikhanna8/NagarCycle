@@ -223,10 +223,10 @@
 
                     <div id="listingActions"
                         style="text-align: right; display: none; gap: 1rem; justify-content: flex-end; margin-top: 2rem;">
-                        <button type="button" class="btn btn-secondary" onclick="sendToRecycler()">Send to
+                        <button type="button" id="sendRecyclerBtn" class="btn btn-secondary">Send to
                             Recycler</button>
-                        <button type="button" id="listWasteBtn" class="btn btn-primary" style="padding: 12px 32px;"
-                            onclick="listToMarketplace()">List on Marketplace</button>
+                        <button type="button" id="listWasteBtn" class="btn btn-primary" style="padding: 12px 32px;">List
+                            on Marketplace</button>
                     </div>
                 </form>
             </div>
@@ -493,7 +493,7 @@
             radio.addEventListener('change', updateEstimatedPrice);
         });
 
-        function listToMarketplace() {
+        window.listToMarketplace = function () {
             // [NEW] Auth Check
             if (!window.currentUser) {
                 alert("You must be logged in to sell items!");
@@ -553,6 +553,11 @@
 
                 document.getElementById('successOverlay').style.display = 'flex';
                 if (window.showEcoQuote) window.showEcoQuote('listing');
+
+                // Redirect after success
+                setTimeout(() => {
+                    window.location.href = 'marketplace.html';
+                }, 1500);
             };
 
             if (file) {
@@ -595,7 +600,27 @@
             } else {
                 saveAndRedirect(null);
             }
-        }
+        };
+
+        // Attach Event Listeners safely
+        document.addEventListener('DOMContentLoaded', () => {
+            const listBtn = document.getElementById('listWasteBtn');
+            const recyclerBtn = document.getElementById('sendRecyclerBtn');
+
+            if (listBtn) {
+                listBtn.addEventListener('click', window.listToMarketplace);
+                console.log("List Button Listener Attached");
+            } else {
+                console.error("List Button NOT Found");
+            }
+
+            if (recyclerBtn) {
+                recyclerBtn.addEventListener('click', window.sendToRecycler);
+                console.log("Recycler Button Listener Attached");
+            } else {
+                console.error("Recycler Button NOT Found");
+            }
+        });
     </script>
 
     <!-- Success Overlay -->

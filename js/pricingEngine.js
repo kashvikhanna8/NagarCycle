@@ -168,7 +168,7 @@ async function analyzeWasteImage(imageFile) {
         const formData = new FormData();
         formData.append('image', imageFile);
 
-        const response = await fetch('http://localhost:5000/api/ai/analyze', {
+        const response = await fetch('/api/ai/analyze', {
             method: 'POST',
             body: formData
         });
@@ -183,28 +183,34 @@ async function analyzeWasteImage(imageFile) {
 
         // Map Backend result to Frontend format for the advanced 3-step system
         return {
-            detectedType: result.primaryCategory, // Now returns Primary Category
-            primaryCategory: result.primaryCategory,
-            subCategory: result.subCategory,
-            isSellingAdvisable: result.isSellingAdvisable,
-            recommendedAction: result.recommendedAction,
-            estimatedRecoveryValue: result.estimatedRecoveryValue,
-            environmentalImpact: result.environmentalImpact,
-            confidence: result.confidence,
+            detectedType: result.primaryCategory,
+            primaryCategory: result.primaryCategory || 'Other',
+            subCategory: result.subCategory || 'Waste',
+            isSellingAdvisable: result.isSellingAdvisable || 'No',
+            recommendedAction: result.recommendedAction || 'manual check',
+            estimatedRecoveryValue: result.estimatedRecoveryValue || 'low',
+            environmentalImpact: result.environmentalImpact || 'Contact local collector.',
+            confidence: result.confidence || 0,
             qualityScore: result.quality_score || 5,
-            analysis: result.analysis
+            analysis: result.analysis || 'Analysis failed. Please try again.'
         };
 
     } catch (error) {
         console.error("AI Error:", error);
-        // Fallback or rethrow
         return {
             detectedType: 'other',
+            primaryCategory: 'Other',
+            subCategory: 'Waste',
+            isSellingAdvisable: 'No',
+            recommendedAction: 'manual check',
+            estimatedRecoveryValue: 'low',
+            environmentalImpact: 'AI Analysis currently unavailable.',
             confidence: 0,
             qualityScore: 5,
-            analysis: `AI Analysis Failed: ${error.message}. Ensure Server is running & API Key is valid.`
+            analysis: `AI Analysis Failed: ${error.message}. Please restart the server or check your API key.`
         };
     }
+
 }
 
 // Export for usage

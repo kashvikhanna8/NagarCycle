@@ -3,18 +3,18 @@ const path = require('path');
 require('dotenv').config();
 
 async function demoHFLogic() {
-    console.log("🔍 Testing Hugging Face Fallback (Real Image)...");
+    console.log("Testing Hugging Face Fallback (Real Image)...");
 
     // Use a REAL image from the dataset
     const imagePath = path.join(__dirname, '../dataset/dataset-resized/plastic/plastic1.jpg');
 
     if (!fs.existsSync(imagePath)) {
-        console.error("❌ Test image not found at:", imagePath);
+        console.error("Test image not found at:", imagePath);
         return;
     }
 
     const imageBuffer = fs.readFileSync(imagePath);
-    console.log(`📸 Loaded test image: ${imagePath} (${imageBuffer.length} bytes)`);
+    console.log(`Loaded test image: ${imagePath} (${imageBuffer.length} bytes)`);
 
     // MODEL: google/vit-base-patch16-224 (Classification)
     // This is a robust standard model that should work on the inference API.
@@ -24,7 +24,7 @@ async function demoHFLogic() {
     const API_URL = `https://router.huggingface.co/hf-inference/models/${MODEL_ID}`;
 
     try {
-        console.log(`📡 Sending POST request to ${API_URL}...`);
+        console.log(`Sending POST request to ${API_URL}...`);
 
         const response = await fetch(API_URL, {
             headers: {

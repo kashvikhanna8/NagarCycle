@@ -89,6 +89,7 @@ window.syncOrders = function () {
 const savedMarketplace = localStorage.getItem('MarketplaceItems');
 const MarketplaceItems = savedMarketplace ? JSON.parse(savedMarketplace) : []; // DEFAULT EMPTY AS REQUESTED
 
+
 window.syncMarketplace = function () {
     localStorage.setItem('MarketplaceItems', JSON.stringify(window.MarketplaceItems));
 };
